@@ -1,7 +1,8 @@
 export const TRAIT_FILES = [
   'age.json', 'body.json', 'face.json', 'hair.json', 'hair-color-effects.json', 'skin.json',
-  'pose.json', 'expression.json', 'gaze.json', 'mood.json',
-  'shot-style.json', 'realism.json'
+  'pose.json', 'expression.json', 'gaze.json',
+  'weather-time.json', 'background.json',
+  'mood.json', 'focus-depth-of-field.json', 'shot-style.json', 'style-medium.json', 'realism.json'
 ];
 
 export async function loadData() {
