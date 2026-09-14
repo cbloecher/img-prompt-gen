@@ -9,7 +9,7 @@ let data, traitIndex, traitScopeIndex;
 let renderedCategories = new Map();
 
 const NAV_GROUPS = [
-  { id:'person', label:'Person', categories:['age','body','face','skin','hair','expression','gaze','pose'] },
+  { id:'person', label:'Person', categories:['age','body','face','skin','hair','hair_color_effects','expression','gaze','pose'] },
   { id:'scene', label:'Szene', categories:['clothing','environment','location','interaction','objects','situation'] },
   { id:'image', label:'Bild', categories:['camera','perspective','composition','framing','lighting','shot_style','mood','realism','style'] }
 ];
@@ -24,6 +24,11 @@ const SUBCATEGORY_LABELS = {
 function groupBy(items,keyFn){const groups=new Map();for(const item of items){const key=keyFn(item);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);}return groups;}
 function slug(value){return String(value).toLowerCase().replace(/[^a-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'');}
 function subLabel(key){return SUBCATEGORY_LABELS[key]||key.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase());}
+function categoryTitle(meta={},fallback='Merkmale'){
+  const en=meta.title_en?.trim();const de=meta.title_de?.trim();
+  if(en&&de)return en===de?en:`${en} / ${de}`;
+  return en||de||fallback;
+}
 function mergedCategories(){const categories=new Map();for(const doc of data.docs){const category=doc.meta?.category||'other';if(!categories.has(category))categories.set(category,{meta:doc.meta||{category},traits:[]});categories.get(category).traits.push(...(doc.traits||[]));}return categories;}
 
 function renderCategories(){
@@ -31,7 +36,7 @@ function renderCategories(){
   for(const [category,categoryDoc] of mergedCategories()){
     const visible=categoryDoc.traits.filter(t=>traitApplies(t,state.sex,state.age));if(!visible.length)continue;
     const block=document.createElement('section');block.className='category-block';block.id=`category-${slug(category)}`;block.dataset.category=category;
-    const h2=document.createElement('h2');h2.className='category-title';h2.textContent=categoryDoc.meta?.title_de||category||'Merkmale';block.append(h2);
+    const h2=document.createElement('h2');h2.className='category-title';h2.textContent=categoryTitle(categoryDoc.meta,category);block.append(h2);
     const groups=groupBy(visible,t=>t.subcategory||'general');const renderedGroups=[];
     for(const [subcategory,traits] of groups){
       const section=document.createElement('section');section.className='subcategory';section.id=`subcategory-${slug(category)}-${slug(subcategory)}`;section.dataset.subcategory=subcategory;
@@ -54,13 +59,13 @@ function renderCategories(){
 
 function selectedCount(traits){return traits.reduce((n,t)=>n+(state.selected.has(t.id)?1:0),0);}
 function appendCategoryNav(nav,category,item){
-  const heading=document.createElement('a');heading.className='nav-category';heading.href=`#${item.block.id}`;heading.textContent=item.meta?.title_de||category;nav.append(heading);
+  const heading=document.createElement('a');heading.className='nav-category';heading.href=`#${item.block.id}`;heading.textContent=categoryTitle(item.meta,category);nav.append(heading);
   for(const group of item.groups){const count=selectedCount(group.traits);const a=document.createElement('a');a.className=`nav-link${count?' has-selection':''}`;a.href=`#${group.section.id}`;a.innerHTML=`<span class="nav-dot"></span><span>${subLabel(group.subcategory)}</span><span class="nav-count">${count}</span>`;nav.append(a);}
 }
 function renderOverview(){
   const sexLabel=state.sex==='female'?'Frau':state.sex==='male'?'Mann':'Neutral';$('#personSummary').textContent=`${sexLabel} · ${state.age}`;
   const nav=$('#sectionNav');nav.replaceChildren();const totals=[];const assigned=new Set();
-  for(const [category,item] of renderedCategories){const allTraits=item.groups.flatMap(g=>g.traits);totals.push(`${item.meta?.title_de||category} ${selectedCount(allTraits)}`);}
+  for(const [category,item] of renderedCategories){const allTraits=item.groups.flatMap(g=>g.traits);totals.push(`${categoryTitle(item.meta,category)} ${selectedCount(allTraits)}`);}
   for(const navGroup of NAV_GROUPS){
     const groupTitle=document.createElement('div');groupTitle.className='nav-main-group';groupTitle.textContent=navGroup.label;nav.append(groupTitle);
     for(const category of navGroup.categories){const item=renderedCategories.get(category);if(!item)continue;assigned.add(category);appendCategoryNav(nav,category,item);}
