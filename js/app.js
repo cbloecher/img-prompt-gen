@@ -8,6 +8,12 @@ const PROFILE_KEY = 'img-prompt-gen-profiles-v1';
 let data, traitIndex;
 let renderedCategories = new Map();
 
+const NAV_GROUPS = [
+  { id:'person', label:'Person', categories:['age','body','face','skin','hair','expression','gaze','pose'] },
+  { id:'scene', label:'Szene', categories:['clothing','environment','location','interaction','objects','situation'] },
+  { id:'image', label:'Bild', categories:['camera','perspective','composition','framing','lighting','shot_style','mood','realism','style'] }
+];
+
 const SUBCATEGORY_LABELS = {
   general:'Allgemein', build:'Körperbau', proportions:'Proportionen', breast:'Brust', hips:'Hüfte', legs:'Beine', arms:'Arme', details:'Details', aging:'Alterung',
   length:'Länge', texture:'Struktur', style:'Frisur', color:'Grundfarbe', color_effects:'Farbeffekte', roots_regrowth:'Ansatz / herausgewachsen', dye_condition:'Färbezustand', realism:'Realismus',
@@ -47,10 +53,20 @@ function renderCategories(){
 }
 
 function selectedCount(traits){return traits.reduce((n,t)=>n+(state.selected.has(t.id)?1:0),0);}
+function appendCategoryNav(nav,category,item){
+  const heading=document.createElement('a');heading.className='nav-category';heading.href=`#${item.block.id}`;heading.textContent=item.meta?.title_de||category;nav.append(heading);
+  for(const group of item.groups){const count=selectedCount(group.traits);const a=document.createElement('a');a.className=`nav-link${count?' has-selection':''}`;a.href=`#${group.section.id}`;a.innerHTML=`<span class="nav-dot"></span><span>${subLabel(group.subcategory)}</span><span class="nav-count">${count}</span>`;nav.append(a);}
+}
 function renderOverview(){
   const sexLabel=state.sex==='female'?'Frau':state.sex==='male'?'Mann':'Neutral';$('#personSummary').textContent=`${sexLabel} · ${state.age}`;
-  const nav=$('#sectionNav');nav.replaceChildren();const totals=[];
-  for(const [category,item] of renderedCategories){const allTraits=item.groups.flatMap(g=>g.traits);const total=selectedCount(allTraits);totals.push(`${item.meta?.title_de||category} ${total}`);const heading=document.createElement('a');heading.className='nav-category';heading.href=`#${item.block.id}`;heading.textContent=item.meta?.title_de||category;nav.append(heading);for(const group of item.groups){const count=selectedCount(group.traits);const a=document.createElement('a');a.className=`nav-link${count?' has-selection':''}`;a.href=`#${group.section.id}`;a.innerHTML=`<span class="nav-dot"></span><span>${subLabel(group.subcategory)}</span><span class="nav-count">${count}</span>`;nav.append(a);}}
+  const nav=$('#sectionNav');nav.replaceChildren();const totals=[];const assigned=new Set();
+  for(const [category,item] of renderedCategories){const allTraits=item.groups.flatMap(g=>g.traits);totals.push(`${item.meta?.title_de||category} ${selectedCount(allTraits)}`);}
+  for(const navGroup of NAV_GROUPS){
+    const groupTitle=document.createElement('div');groupTitle.className='nav-main-group';groupTitle.textContent=navGroup.label;nav.append(groupTitle);
+    for(const category of navGroup.categories){const item=renderedCategories.get(category);if(!item)continue;assigned.add(category);appendCategoryNav(nav,category,item);}
+  }
+  const other=[...renderedCategories.entries()].filter(([category])=>!assigned.has(category));
+  if(other.length){const groupTitle=document.createElement('div');groupTitle.className='nav-main-group';groupTitle.textContent='Sonstige';nav.append(groupTitle);for(const [category,item] of other)appendCategoryNav(nav,category,item);}
   $('#selectionSummary').innerHTML=`<strong>${sexLabel} · ${state.age}</strong><span>${totals.join(' · ')}</span>`;
 }
 
