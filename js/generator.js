@@ -1,7 +1,9 @@
 export const CATEGORY_ORDER = {
   age: 10, body: 20, face: 30, skin: 40, hair: 50,
-  hair_color_effects: 55, expression: 60, gaze: 70, pose: 80, mood: 90,
-  shot_style: 100, realism: 120
+  hair_color_effects: 55, expression: 60, gaze: 70, pose: 80,
+  weather_time: 135, background: 145,
+  mood: 170, focus_depth_of_field: 180, shot_style: 190,
+  style_medium: 200, realism: 210
 };
 
 export function traitApplies(trait, sex, age) {
