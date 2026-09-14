@@ -1,6 +1,6 @@
 export const CATEGORY_ORDER = {
   age: 10, body: 20, face: 30, skin: 40, hair: 50,
-  expression: 60, gaze: 70, pose: 80, mood: 90,
+  hair_color_effects: 55, expression: 60, gaze: 70, pose: 80, mood: 90,
   shot_style: 100, realism: 120
 };
 
