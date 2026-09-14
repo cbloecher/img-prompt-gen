@@ -1,0 +1,24 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.app { width: min(1100px, calc(100% - 2rem)); margin: 2rem auto 4rem; }
+header { margin-bottom: 1.5rem; }
+h1, h2, h3, p { margin-top: 0; }
+.panel, details { border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: .6rem; padding: 1rem; margin-bottom: 1rem; }
+.person-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 1rem; }
+label { display: grid; gap: .35rem; }
+select, input, textarea, button { font: inherit; }
+select, input, textarea { width: 100%; padding: .65rem; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); border-radius: .4rem; background: transparent; }
+textarea { resize: vertical; }
+button { padding: .55rem .85rem; cursor: pointer; }
+summary { cursor: pointer; font-weight: 650; }
+.subcategory { margin-top: 1rem; }
+.traits { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: .5rem 1rem; }
+.trait { display: grid; grid-template-columns: auto 1fr; gap: .55rem; align-items: start; padding: .4rem 0; }
+.trait input { width: auto; margin-top: .25rem; }
+.trait small { display: block; opacity: .72; margin-top: .15rem; }
+.output-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.actions { margin-top: 1rem; }
+.message { min-height: 1.3em; margin: .5rem 0 0; }
+.message.error { font-weight: 650; }
+.hidden { display: none !important; }
