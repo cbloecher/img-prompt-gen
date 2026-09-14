@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "category": "weather_time",
+    "title_en": "Weather & time",
+    "title_de": "Wetter & Tageszeit",
+    "description_en": "Weather and time-of-day cues that describe scene conditions independently of the location.",
+    "description_de": "Wetter- und Tageszeitmerkmale, die Szenenbedingungen unabhängig vom Ort beschreiben.",
+    "guidance": {
+      "effect_en": "Use these traits for environmental conditions, not for the location itself.",
+      "effect_de": "Diese Merkmale beschreiben Umgebungsbedingungen und nicht den Ort selbst.",
+      "combination_en": "Choose one time of day and combine weather traits only when physically plausible.",
+      "combination_de": "Eine Tageszeit wählen und Wettermerkmale nur in plausiblen Kombinationen ergänzen."
+    }
+  },
+  "traits": [
+    {"id":"time_day","prompt":"daytime","label_en":"Day","label_de":"Tag","description_en":"Scene takes place during daytime.","description_de":"Die Szene findet tagsüber statt.","category":"weather_time","subcategory":"time","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"time_of_day"},"tags":["time","day"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"time_night","prompt":"nighttime","label_en":"Night","label_de":"Nacht","description_en":"Scene takes place at night.","description_de":"Die Szene findet nachts statt.","category":"weather_time","subcategory":"time","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"time_of_day"},"tags":["time","night"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"time_sunrise","prompt":"at sunrise","label_en":"Sunrise","label_de":"Sonnenaufgang","description_en":"Early-morning light around sunrise.","description_de":"Frühes Morgenlicht rund um den Sonnenaufgang.","category":"weather_time","subcategory":"time","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"time_of_day"},"tags":["time","sunrise"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"time_sunset","prompt":"at sunset","label_en":"Sunset","label_de":"Sonnenuntergang","description_en":"Evening light around sunset.","description_de":"Abendlicht rund um den Sonnenuntergang.","category":"weather_time","subcategory":"time","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"time_of_day"},"tags":["time","sunset"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"weather_sunny","prompt":"sunny weather","label_en":"Sunny","label_de":"Sonnig","description_en":"Bright clear weather with direct sun.","description_de":"Helles klares Wetter mit direkter Sonne.","category":"weather_time","subcategory":"weather","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"multiple","group":null},"tags":["weather","sunny"],"requires":[],"conflicts":["weather_rainy","weather_snowy"],"implies":[],"notes":""},
+    {"id":"weather_rainy","prompt":"rainy weather","label_en":"Rainy","label_de":"Regnerisch","description_en":"Visible rain or wet rainy conditions.","description_de":"Sichtbarer Regen oder nasse regnerische Bedingungen.","category":"weather_time","subcategory":"weather","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"multiple","group":null},"tags":["weather","rain"],"requires":[],"conflicts":["weather_sunny","weather_snowy"],"implies":[],"notes":""},
+    {"id":"weather_snowy","prompt":"snowy weather","label_en":"Snowy","label_de":"Schneereich","description_en":"Falling snow or clearly snowy conditions.","description_de":"Fallender Schnee oder deutlich winterlich verschneite Bedingungen.","category":"weather_time","subcategory":"weather","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"multiple","group":null},"tags":["weather","snow"],"requires":[],"conflicts":["weather_sunny","weather_rainy"],"implies":[],"notes":""},
+    {"id":"weather_foggy","prompt":"foggy atmosphere","label_en":"Foggy","label_de":"Neblig","description_en":"Visible fog or mist reducing distant contrast.","description_de":"Sichtbarer Nebel oder Dunst mit reduziertem Fernkontrast.","category":"weather_time","subcategory":"weather","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"multiple","group":null},"tags":["weather","fog","mist"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
