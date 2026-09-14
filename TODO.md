@@ -2,7 +2,7 @@
 
 Details und Begründungen siehe [Recherche bestehender Projekte](docs/research-existing-projects.md), [Datenmodell](docs/data-model.md) und [Safety](docs/safety.md).
 
-- [ ] Linke Navigation in drei Hauptbereiche gliedern: **Person**, **Szene**, **Bild**.
+- [x] Linke Navigation in drei Hauptbereiche gliedern: **Person**, **Szene**, **Bild**.
 - [ ] Taxonomie für **Szene** ergänzen: Kleidung, Umgebung/Ort, Interaktion/Objekte, Situation.
 - [ ] Taxonomie für **Bild** ergänzen: Kamera, Perspektive, Ausschnitt/Komposition, Licht, Aufnahmeart, Stimmung, Realismus/Style.
 - [ ] Trait-Suche über alle Kategorien ergänzen.
