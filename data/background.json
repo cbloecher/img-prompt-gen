@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "category": "background",
+    "title_en": "Background",
+    "title_de": "Hintergrund",
+    "description_en": "Background type and simple backdrop appearance, separated from the location itself.",
+    "description_de": "Art und einfache Gestaltung des Hintergrunds, getrennt vom eigentlichen Ort.",
+    "guidance": {
+      "effect_en": "Use this category for backdrop structure rather than the physical place.",
+      "effect_de": "Diese Kategorie beschreibt die Hintergrundgestaltung und nicht den physischen Ort.",
+      "combination_en": "Choose a background type and optionally a compatible color treatment.",
+      "combination_de": "Eine Hintergrundart wählen und optional eine passende Farbgestaltung ergänzen."
+    }
+  },
+  "traits": [
+    {"id":"background_studio","prompt":"studio background","label_en":"Studio background","label_de":"Studiohintergrund","description_en":"Neutral photographic studio backdrop.","description_de":"Neutraler fotografischer Studiohintergrund.","category":"background","subcategory":"type","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"background_type"},"tags":["background","studio"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"background_solid","prompt":"solid background","label_en":"Solid background","label_de":"Einfarbiger Hintergrund","description_en":"Uniform background without visible scenery.","description_de":"Gleichmäßiger Hintergrund ohne sichtbare Umgebung.","category":"background","subcategory":"type","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"background_type"},"tags":["background","plain"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"background_gradient","prompt":"subtle gradient background","label_en":"Gradient background","label_de":"Verlaufshintergrund","description_en":"Simple tonal gradient behind the subject.","description_de":"Einfacher Tonwertverlauf hinter der Person.","category":"background","subcategory":"type","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"background_type"},"tags":["background","gradient"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"background_white","prompt":"white background","label_en":"White background","label_de":"Weißer Hintergrund","description_en":"Predominantly white backdrop.","description_de":"Überwiegend weißer Hintergrund.","category":"background","subcategory":"color","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"background_color"},"tags":["background","white"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"background_black","prompt":"black background","label_en":"Black background","label_de":"Schwarzer Hintergrund","description_en":"Predominantly black backdrop.","description_de":"Überwiegend schwarzer Hintergrund.","category":"background","subcategory":"color","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"background_color"},"tags":["background","black"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
