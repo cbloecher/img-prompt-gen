@@ -20,8 +20,9 @@
 <label>Alter<input id="age" type="number" min="18" max="120" value="35"></label>
 </div></section>
 <section id="profiles" class="panel"><h2>Profile</h2><div class="person-grid">
+<label>Bereich<select id="profileScope"><option value="all">Gesamt</option><option value="person">Person</option><option value="scene">Szene</option><option value="image">Bild</option><option value="other">Sonstige</option></select></label>
 <label>Gespeichertes Profil<select id="profileSelect"><option value="">– Profil wählen –</option></select></label>
-<label>Profilname<input id="profileName" type="text" maxlength="80" placeholder="z. B. Porträt Anna"></label>
+<label>Profilname<input id="profileName" type="text" maxlength="80" placeholder="z. B. Natürliches Porträt"></label>
 </div><div class="actions"><button id="saveProfile" type="button">Profil speichern</button> <button id="loadProfile" type="button">Profil laden</button> <button id="deleteProfile" type="button">Profil löschen</button></div><p id="profileMessage" class="message"></p></section>
 <section id="categories" class="categories" aria-live="polite"></section>
 <section id="free-text" class="panel"><h2>Freie Ergänzung</h2><textarea id="freeText" rows="3" placeholder="z. B. soft window light from the left"></textarea><p id="safetyMessage" class="message" role="status"></p></section>
