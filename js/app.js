@@ -26,7 +26,7 @@ function slug(value){return String(value).toLowerCase().replace(/[^a-z0-9_-]+/g,
 function subLabel(key){return SUBCATEGORY_LABELS[key]||key.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase());}
 function categoryTitle(meta={},fallback='Merkmale'){
   const en=meta.title_en?.trim();const de=meta.title_de?.trim();
-  if(en&&de)return en===de?en:`${en} / ${de}`;
+  if(en&&de)return `${en} / ${de}`;
   return en||de||fallback;
 }
 function mergedCategories(){const categories=new Map();for(const doc of data.docs){const category=doc.meta?.category||'other';if(!categories.has(category))categories.set(category,{meta:doc.meta||{category},traits:[]});categories.get(category).traits.push(...(doc.traits||[]));}return categories;}
