@@ -2,10 +2,10 @@ import { loadData } from './data.js';
 import { state, restoreState, saveState, clearState } from './state.js';
 import { checkSafety } from './safety.js';
 import { buildTraitIndex, traitApplies, selectTrait, validateSelection, buildPrompt, buildNegativePrompt } from './generator.js';
+import { readProfiles, writeProfiles, upsertProfile, deleteProfileEntry, findProfile, buildTraitScopeIndex, selectedForScope } from './profiles.js';
 
 const $ = s => document.querySelector(s);
-const PROFILE_KEY = 'img-prompt-gen-profiles-v1';
-let data, traitIndex;
+let data, traitIndex, traitScopeIndex;
 let renderedCategories = new Map();
 
 const NAV_GROUPS = [
@@ -74,16 +74,51 @@ function updateOutput(){const safety=checkSafety(state.freeText,data.safety),mes
 function syncControls(){$('#sex').value=state.sex;$('#age').value=state.age;$('#freeText').value=state.freeText;}
 async function copyText(text){if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return;}const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.focus();area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('Kopieren fehlgeschlagen');}
 function flash(button,text='Kopiert'){const old=button.textContent;button.textContent=text;setTimeout(()=>button.textContent=old,900);}
-function profiles(){try{return JSON.parse(localStorage.getItem(PROFILE_KEY))||{};}catch{return {};}}
-function renderProfiles(selected=''){const select=$('#profileSelect');select.innerHTML='<option value="">– Profil wählen –</option>';for(const name of Object.keys(profiles()).sort((a,b)=>a.localeCompare(b,'de'))){const o=document.createElement('option');o.value=o.textContent=name;select.append(o);}select.value=selected;}
-function saveProfile(){const name=$('#profileName').value.trim();if(!name){$('#profileMessage').textContent='Bitte Profilnamen eingeben.';return;}const all=profiles();all[name]={sex:state.sex,age:state.age,selected:[...state.selected],freeText:state.freeText};localStorage.setItem(PROFILE_KEY,JSON.stringify(all));renderProfiles(name);$('#profileMessage').textContent=`Profil „${name}“ gespeichert.`;}
-function loadProfile(){const name=$('#profileSelect').value,p=profiles()[name];if(!p)return;state.sex=p.sex||'all';state.age=Number(p.age)||35;state.selected=new Set(p.selected||[]);state.freeText=p.freeText||'';syncControls();renderCategories();updateOutput();$('#profileName').value=name;$('#profileMessage').textContent=`Profil „${name}“ geladen.`;}
-function deleteProfile(){const name=$('#profileSelect').value;if(!name)return;const all=profiles();delete all[name];localStorage.setItem(PROFILE_KEY,JSON.stringify(all));renderProfiles();$('#profileName').value='';$('#profileMessage').textContent=`Profil „${name}“ gelöscht.`;}
 
-async function init(){try{data=await loadData();traitIndex=buildTraitIndex(data.docs);restoreState();syncControls();renderCategories();renderProfiles();updateOutput();
+function currentProfileScope(){return $('#profileScope').value||'all';}
+function renderProfiles(selected=''){
+  const scope=currentProfileScope();const select=$('#profileSelect');select.innerHTML='<option value="">– Profil wählen –</option>';
+  const entries=readProfiles().filter(p=>p.scope===scope).sort((a,b)=>a.name.localeCompare(b.name,'de'));
+  for(const profile of entries){const o=document.createElement('option');o.value=o.textContent=profile.name;select.append(o);}select.value=selected;
+}
+function saveProfile(){
+  const name=$('#profileName').value.trim(),scope=currentProfileScope();if(!name){$('#profileMessage').textContent='Bitte Profilnamen eingeben.';return;}
+  const profile={name,scope,selected:selectedForScope(state.selected,scope,traitScopeIndex)};
+  if(scope==='all'||scope==='person'){profile.sex=state.sex;profile.age=state.age;}
+  if(scope==='all')profile.freeText=state.freeText;
+  const next=upsertProfile(readProfiles(),profile);writeProfiles(next);renderProfiles(name);$('#profileMessage').textContent=`${scope==='all'?'Gesamtprofil':'Bereichsprofil'} „${name}“ gespeichert.`;
+}
+function applyProfileSelection(profile){
+  const scope=profile.scope||'all';
+  if(scope==='all'||scope==='person'){
+    state.sex=profile.sex||state.sex||'all';
+    state.age=Math.max(18,Number(profile.age)||state.age||35);
+  }
+  if(scope==='all')state.freeText=profile.freeText||'';
+
+  const base=new Set();
+  if(scope!=='all')for(const id of state.selected){if(traitIndex.has(id)&&traitScopeIndex.get(id)!==scope)base.add(id);}
+  state.selected=base;
+  for(const id of profile.selected||[]){
+    const trait=traitIndex.get(id);if(!trait)continue;
+    if(scope!=='all'&&traitScopeIndex.get(id)!==scope)continue;
+    if(!traitApplies(trait,state.sex,state.age))continue;
+    selectTrait(state,trait,true,traitIndex);
+  }
+}
+function loadProfile(){
+  const scope=currentProfileScope(),name=$('#profileSelect').value,p=findProfile(readProfiles(),scope,name);if(!p)return;
+  applyProfileSelection(p);syncControls();renderCategories();updateOutput();$('#profileName').value=name;$('#profileMessage').textContent=`Profil „${name}“ geladen.`;
+}
+function deleteProfile(){
+  const scope=currentProfileScope(),name=$('#profileSelect').value;if(!name)return;
+  writeProfiles(deleteProfileEntry(readProfiles(),scope,name));renderProfiles();$('#profileName').value='';$('#profileMessage').textContent=`Profil „${name}“ gelöscht.`;
+}
+
+async function init(){try{data=await loadData();traitIndex=buildTraitIndex(data.docs);traitScopeIndex=buildTraitScopeIndex(data.docs,NAV_GROUPS);restoreState();syncControls();renderCategories();renderProfiles();updateOutput();
 $('#categories').addEventListener('change',e=>{const id=e.target.dataset.traitId;if(!id)return;selectTrait(state,traitIndex.get(id),e.target.checked,traitIndex);renderCategories();updateOutput();});
 $('#sex').addEventListener('change',e=>{state.sex=e.target.value;renderCategories();updateOutput();});$('#age').addEventListener('change',e=>{state.age=Math.max(18,Number(e.target.value)||18);e.target.value=state.age;renderCategories();updateOutput();});$('#freeText').addEventListener('input',e=>{state.freeText=e.target.value;updateOutput();});
-$('#reset').addEventListener('click',()=>{clearState();syncControls();renderCategories();updateOutput();});$('#saveProfile').addEventListener('click',saveProfile);$('#loadProfile').addEventListener('click',loadProfile);$('#deleteProfile').addEventListener('click',deleteProfile);
+$('#reset').addEventListener('click',()=>{clearState();syncControls();renderCategories();updateOutput();});$('#profileScope').addEventListener('change',()=>{renderProfiles();$('#profileName').value='';$('#profileMessage').textContent='';});$('#profileSelect').addEventListener('change',e=>{$('#profileName').value=e.target.value;});$('#saveProfile').addEventListener('click',saveProfile);$('#loadProfile').addEventListener('click',loadProfile);$('#deleteProfile').addEventListener('click',deleteProfile);
 document.addEventListener('click',async e=>{const target=e.target.dataset.copy;if(!target)return;try{await copyText(document.getElementById(target).value);flash(e.target);}catch(err){$('#safetyMessage').textContent=err.message;}});
 $('#copyAll').addEventListener('click',async e=>{const positive=$('#promptOutput').value,negative=$('#negativeOutput').value;const text=`${positive}\n\nNEGATIVE:\n${negative}`;try{await copyText(text);flash(e.target);}catch(err){$('#safetyMessage').textContent=err.message;}});
 }catch(error){$('#categories').innerHTML=`<p class="message error">${error.message}. Bitte über einen lokalen HTTP-Server starten, nicht als file://.</p>`;}}
