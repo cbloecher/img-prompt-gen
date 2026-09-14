@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>img-prompt-gen</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <main class="app">
+    <header><h1>img-prompt-gen</h1><p>Einfacher, modellneutraler Prompt-Generator für realistische erwachsene Personen.</p></header>
+
+    <section class="person panel">
+      <h2>Person</h2>
+      <div class="person-grid">
+        <label>Geschlecht
+          <select id="sex"><option value="all">Alle / neutral</option><option value="female">Weiblich</option><option value="male">Männlich</option></select>
+        </label>
+        <label>Alter
+          <input id="age" type="number" min="18" max="120" value="35">
+        </label>
+      </div>
+    </section>
+
+    <section id="categories" class="categories" aria-live="polite"></section>
+
+    <section class="panel">
+      <h2>Freie Ergänzung</h2>
+      <textarea id="freeText" rows="3" placeholder="z. B. soft window light from the left"></textarea>
+      <p id="safetyMessage" class="message" role="status"></p>
+    </section>
+
+    <section class="panel output">
+      <div class="output-head"><h2>Prompt</h2><button type="button" data-copy="promptOutput">Kopieren</button></div>
+      <textarea id="promptOutput" rows="6" readonly></textarea>
+      <div class="output-head"><h2>Negative Prompt</h2><button type="button" data-copy="negativeOutput">Kopieren</button></div>
+      <textarea id="negativeOutput" rows="4" readonly></textarea>
+      <div class="actions"><button id="reset" type="button">Auswahl zurücksetzen</button></div>
+    </section>
+  </main>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
