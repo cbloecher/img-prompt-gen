@@ -4,20 +4,30 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>img-prompt-gen</title><link rel="stylesheet" href="css/app.css">
 </head>
-<body><main class="app">
-<header><h1>img-prompt-gen</h1><p>Einfacher, modellneutraler Prompt-Generator für realistische erwachsene Personen.</p></header>
-<section class="person panel"><h2>Person</h2><div class="person-grid">
+<body>
+<div class="page-layout">
+<aside id="overview" class="overview" aria-label="Auswahlübersicht">
+  <div class="overview-inner">
+    <h2>Übersicht</h2>
+    <div id="personSummary" class="person-summary"></div>
+    <nav id="sectionNav" class="section-nav"></nav>
+  </div>
+</aside>
+<main class="app">
+<header><h1>img-prompt-gen</h1><p>Einfacher, modellneutraler Prompt-Generator für realistische erwachsene Personen.</p><div id="selectionSummary" class="selection-summary" aria-live="polite"></div></header>
+<section id="person" class="person panel"><h2>Person</h2><div class="person-grid">
 <label>Geschlecht<select id="sex"><option value="all">Alle / neutral</option><option value="female">Weiblich</option><option value="male">Männlich</option></select></label>
 <label>Alter<input id="age" type="number" min="18" max="120" value="35"></label>
 </div></section>
-<section class="panel"><h2>Profile</h2><div class="person-grid">
+<section id="profiles" class="panel"><h2>Profile</h2><div class="person-grid">
 <label>Gespeichertes Profil<select id="profileSelect"><option value="">– Profil wählen –</option></select></label>
 <label>Profilname<input id="profileName" type="text" maxlength="80" placeholder="z. B. Porträt Anna"></label>
 </div><div class="actions"><button id="saveProfile" type="button">Profil speichern</button> <button id="loadProfile" type="button">Profil laden</button> <button id="deleteProfile" type="button">Profil löschen</button></div><p id="profileMessage" class="message"></p></section>
 <section id="categories" class="categories" aria-live="polite"></section>
-<section class="panel"><h2>Freie Ergänzung</h2><textarea id="freeText" rows="3" placeholder="z. B. soft window light from the left"></textarea><p id="safetyMessage" class="message" role="status"></p></section>
-<section class="panel output">
+<section id="free-text" class="panel"><h2>Freie Ergänzung</h2><textarea id="freeText" rows="3" placeholder="z. B. soft window light from the left"></textarea><p id="safetyMessage" class="message" role="status"></p></section>
+<section id="output" class="panel output">
 <div class="output-head"><h2>Prompt</h2><button type="button" data-copy="promptOutput">Kopieren</button></div><textarea id="promptOutput" rows="6" readonly></textarea>
 <div class="output-head"><h2>Negative Prompt</h2><button type="button" data-copy="negativeOutput">Kopieren</button></div><textarea id="negativeOutput" rows="4" readonly></textarea>
 <div class="actions"><button id="copyAll" type="button">Gesamten Prompt kopieren</button> <button id="reset" type="button">Auswahl zurücksetzen</button></div>
-</section></main><script type="module" src="js/app.js"></script></body></html>
+</section></main>
+</div><script type="module" src="js/app.js"></script></body></html>
