@@ -1,5 +1,5 @@
 export const TRAIT_FILES = [
-  'age.json', 'body.json', 'face.json', 'hair.json', 'skin.json',
+  'age.json', 'body.json', 'face.json', 'hair.json', 'hair-color-effects.json', 'skin.json',
   'pose.json', 'expression.json', 'gaze.json', 'mood.json',
   'shot-style.json', 'realism.json'
 ];
