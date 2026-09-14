@@ -14,7 +14,8 @@ The data layer is intentionally independent from SDXL, FLUX or a specific UI. Mo
 img-prompt-gen/
 ├── README.md
 ├── docs/
-│   └── data-model.md
+│   ├── data-model.md
+│   └── safety.md
 └── data/
     ├── age.json
     ├── body.json
@@ -28,7 +29,8 @@ img-prompt-gen/
     ├── mood.json             # overall emotional atmosphere
     ├── shot-style.json       # photographic/staging character
     ├── realism.json
-    └── negative.json
+    ├── negative.json
+    └── safety.json           # deterministic rules for user-controlled free text
 ```
 
 ## Design principles
@@ -43,9 +45,11 @@ img-prompt-gen/
 - Model-specific syntax and weights do not belong in the trait data.
 - Negative prompts are kept separately in `negative.json`.
 - Anatomy, expression, pose, gaze, mood and photographic style remain separate dimensions so the generator can combine them independently.
+- The project is adult-only and targets non-explicit portrait/person generation.
+- Curated traits are preferred over free text. Every user-controlled free-text field is normalized and checked against `data/safety.json` before use, with a second check of the assembled prompt.
 
-See [docs/data-model.md](docs/data-model.md) for the JSON syntax and semantics.
+See [docs/data-model.md](docs/data-model.md) for the trait JSON syntax and [docs/safety.md](docs/safety.md) for the free-text safety design.
 
 ## Planned generator
 
-The first generator should remain deliberately simple: static HTML/CSS/JavaScript, load the JSON files, filter/select traits, validate obvious conflicts, and output a positive and negative prompt. No framework or backend is required for v1.
+The first generator should remain deliberately simple: static HTML/CSS/JavaScript, load the JSON files, filter/select traits, validate obvious conflicts, safety-check free-text additions, and output a positive and negative prompt. No framework or backend is required for v1.
