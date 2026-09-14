@@ -7,14 +7,86 @@ const $ = s => document.querySelector(s);
 const PROFILE_KEY = 'img-prompt-gen-profiles-v1';
 let data, traitIndex;
 
-function renderCategories() {
-  const root=$('#categories'); root.replaceChildren();
-  for(const doc of data.docs){const visible=(doc.traits||[]).filter(t=>traitApplies(t,state.sex,state.age)); if(!visible.length)continue;
-    const details=document.createElement('details'); details.open=['body','face','skin'].includes(doc.meta?.category); const summary=document.createElement('summary'); summary.textContent=doc.meta?.title_de||doc.meta?.category||'Merkmale'; details.append(summary);
-    const groups=Map.groupBy(visible,t=>t.subcategory||'general');
-    for(const [subcategory,traits] of groups){const section=document.createElement('section');section.className='subcategory';const h3=document.createElement('h3');h3.textContent=subcategory.replaceAll('_',' ');section.append(h3);const list=document.createElement('div');list.className='traits';
-      for(const trait of traits){const label=document.createElement('label');label.className='trait';const input=document.createElement('input');input.type=trait.selection?.mode==='single'&&trait.selection?.group?'radio':'checkbox';if(input.type==='radio')input.name=`group-${trait.selection.group}`;input.checked=state.selected.has(trait.id);input.dataset.traitId=trait.id;const text=document.createElement('span');text.append(document.createTextNode(trait.label_de||trait.label_en||trait.prompt));const small=document.createElement('small');small.textContent=`${trait.prompt} — ${trait.description_de||''}`;text.append(small);label.append(input,text);list.append(label);} section.append(list);details.append(section);} root.append(details);}
+function groupBy(items, keyFn) {
+  const groups = new Map();
+  for (const item of items) {
+    const key = keyFn(item);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  }
+  return groups;
 }
+
+function renderCategories() {
+  const root = $('#categories');
+  root.replaceChildren();
+
+  // Several JSON files may intentionally contribute to the same UI category.
+  // Example: hair.json contains the basic hair traits while
+  // hair-color-effects.json adds further colors and dye effects.
+  const categories = new Map();
+  for (const doc of data.docs) {
+    const category = doc.meta?.category || 'other';
+    if (!categories.has(category)) {
+      categories.set(category, {
+        meta: doc.meta || { category },
+        traits: []
+      });
+    }
+    categories.get(category).traits.push(...(doc.traits || []));
+  }
+
+  for (const [category, categoryDoc] of categories) {
+    const visible = categoryDoc.traits.filter(t => traitApplies(t, state.sex, state.age));
+    if (!visible.length) continue;
+
+    const details = document.createElement('details');
+    details.open = ['body', 'face', 'skin'].includes(category);
+
+    const summary = document.createElement('summary');
+    summary.textContent = categoryDoc.meta?.title_de || category || 'Merkmale';
+    details.append(summary);
+
+    const groups = groupBy(visible, t => t.subcategory || 'general');
+    for (const [subcategory, traits] of groups) {
+      const section = document.createElement('section');
+      section.className = 'subcategory';
+
+      const h3 = document.createElement('h3');
+      h3.textContent = subcategory.replaceAll('_', ' ');
+      section.append(h3);
+
+      const list = document.createElement('div');
+      list.className = 'traits';
+
+      for (const trait of traits) {
+        const label = document.createElement('label');
+        label.className = 'trait';
+
+        const input = document.createElement('input');
+        input.type = trait.selection?.mode === 'single' && trait.selection?.group ? 'radio' : 'checkbox';
+        if (input.type === 'radio') input.name = `group-${trait.selection.group}`;
+        input.checked = state.selected.has(trait.id);
+        input.dataset.traitId = trait.id;
+
+        const text = document.createElement('span');
+        text.append(document.createTextNode(trait.label_de || trait.label_en || trait.prompt));
+        const small = document.createElement('small');
+        small.textContent = `${trait.prompt} — ${trait.description_de || ''}`;
+        text.append(small);
+
+        label.append(input, text);
+        list.append(label);
+      }
+
+      section.append(list);
+      details.append(section);
+    }
+
+    root.append(details);
+  }
+}
+
 function updateOutput(){const safety=checkSafety(state.freeText,data.safety),message=$('#safetyMessage');if(!safety.ok){message.textContent=`Freie Ergänzung blockiert (${[...new Set(safety.matches.map(m=>m.category))].join(', ')}).`;message.className='message error';$('#promptOutput').value='';}else{const issues=validateSelection(state,traitIndex);message.textContent=issues.length?issues.join(' · '):'';message.className='message';const prompt=buildPrompt(state,traitIndex),finalSafety=checkSafety(prompt,data.safety);$('#promptOutput').value=finalSafety.ok?prompt:'';if(!finalSafety.ok){message.textContent='Der zusammengesetzte Prompt wurde durch die Sicherheitsprüfung blockiert.';message.className='message error';}}$('#negativeOutput').value=buildNegativePrompt(data.negative);saveState();}
 function syncControls(){$('#sex').value=state.sex;$('#age').value=state.age;$('#freeText').value=state.freeText;}
 
