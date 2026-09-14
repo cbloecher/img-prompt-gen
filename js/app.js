@@ -6,94 +6,61 @@ import { buildTraitIndex, traitApplies, selectTrait, validateSelection, buildPro
 const $ = s => document.querySelector(s);
 const PROFILE_KEY = 'img-prompt-gen-profiles-v1';
 let data, traitIndex;
+let renderedCategories = new Map();
 
-function groupBy(items, keyFn) {
-  const groups = new Map();
-  for (const item of items) {
-    const key = keyFn(item);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(item);
-  }
-  return groups;
+const SUBCATEGORY_LABELS = {
+  general:'Allgemein', build:'Körperbau', proportions:'Proportionen', breast:'Brust', hips:'Hüfte', legs:'Beine', arms:'Arme', details:'Details', aging:'Alterung',
+  length:'Länge', texture:'Struktur', style:'Frisur', color:'Grundfarbe', color_effects:'Farbeffekte', roots_regrowth:'Ansatz / herausgewachsen', dye_condition:'Färbezustand', realism:'Realismus',
+  base_pose:'Grundpose', posture:'Haltung', leg_pose:'Beine', hand_pose:'Hände', arm_pose:'Arme',
+  face_shape:'Gesichtsform', forehead:'Stirn', cheeks_jaw:'Wangen / Kiefer', eyes:'Augen', eye_details:'Augendetails', eye_color:'Augenfarbe', eyebrows:'Augenbrauen', nose:'Nase', mouth_lips:'Mund / Lippen', teeth:'Zähne', ears:'Ohren', facial_hair:'Gesichtsbehaarung', individualization:'Individualisierung'
+};
+
+function groupBy(items, keyFn) { const groups=new Map(); for(const item of items){const key=keyFn(item);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);} return groups; }
+function slug(value){return String(value).toLowerCase().replace(/[^a-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'');}
+function subLabel(key){return SUBCATEGORY_LABELS[key] || key.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase());}
+
+function mergedCategories(){
+  const categories=new Map();
+  for(const doc of data.docs){const category=doc.meta?.category||'other';if(!categories.has(category))categories.set(category,{meta:doc.meta||{category},traits:[]});categories.get(category).traits.push(...(doc.traits||[]));}
+  return categories;
 }
 
 function renderCategories() {
-  const root = $('#categories');
-  root.replaceChildren();
-
-  // Several JSON files may intentionally contribute to the same UI category.
-  // Example: hair.json contains the basic hair traits while
-  // hair-color-effects.json adds further colors and dye effects.
-  const categories = new Map();
-  for (const doc of data.docs) {
-    const category = doc.meta?.category || 'other';
-    if (!categories.has(category)) {
-      categories.set(category, {
-        meta: doc.meta || { category },
-        traits: []
-      });
+  const root=$('#categories'); root.replaceChildren(); renderedCategories=new Map();
+  const categories=mergedCategories();
+  for(const [category,categoryDoc] of categories){
+    const visible=categoryDoc.traits.filter(t=>traitApplies(t,state.sex,state.age)); if(!visible.length)continue;
+    const details=document.createElement('details'); details.id=`category-${slug(category)}`; details.dataset.category=category; details.open=['body','face','skin'].includes(category);
+    const summary=document.createElement('summary'); summary.textContent=categoryDoc.meta?.title_de||category||'Merkmale'; details.append(summary);
+    const groups=groupBy(visible,t=>t.subcategory||'general'); const renderedGroups=[];
+    for(const [subcategory,traits] of groups){
+      const section=document.createElement('section');section.className='subcategory';section.id=`subcategory-${slug(category)}-${slug(subcategory)}`;section.dataset.subcategory=subcategory;
+      const h3=document.createElement('h3');h3.textContent=subLabel(subcategory);section.append(h3);const list=document.createElement('div');list.className='traits';
+      for(const trait of traits){const label=document.createElement('label');label.className='trait';const input=document.createElement('input');input.type=trait.selection?.mode==='single'&&trait.selection?.group?'radio':'checkbox';if(input.type==='radio')input.name=`group-${trait.selection.group}`;input.checked=state.selected.has(trait.id);input.dataset.traitId=trait.id;const text=document.createElement('span');text.append(document.createTextNode(trait.label_de||trait.label_en||trait.prompt));const small=document.createElement('small');small.textContent=`${trait.prompt} — ${trait.description_de||''}`;text.append(small);label.append(input,text);list.append(label);}
+      section.append(list);details.append(section);renderedGroups.push({subcategory,traits,section});
     }
-    categories.get(category).traits.push(...(doc.traits || []));
+    root.append(details);renderedCategories.set(category,{meta:categoryDoc.meta,details,groups:renderedGroups});
   }
-
-  for (const [category, categoryDoc] of categories) {
-    const visible = categoryDoc.traits.filter(t => traitApplies(t, state.sex, state.age));
-    if (!visible.length) continue;
-
-    const details = document.createElement('details');
-    details.open = ['body', 'face', 'skin'].includes(category);
-
-    const summary = document.createElement('summary');
-    summary.textContent = categoryDoc.meta?.title_de || category || 'Merkmale';
-    details.append(summary);
-
-    const groups = groupBy(visible, t => t.subcategory || 'general');
-    for (const [subcategory, traits] of groups) {
-      const section = document.createElement('section');
-      section.className = 'subcategory';
-
-      const h3 = document.createElement('h3');
-      h3.textContent = subcategory.replaceAll('_', ' ');
-      section.append(h3);
-
-      const list = document.createElement('div');
-      list.className = 'traits';
-
-      for (const trait of traits) {
-        const label = document.createElement('label');
-        label.className = 'trait';
-
-        const input = document.createElement('input');
-        input.type = trait.selection?.mode === 'single' && trait.selection?.group ? 'radio' : 'checkbox';
-        if (input.type === 'radio') input.name = `group-${trait.selection.group}`;
-        input.checked = state.selected.has(trait.id);
-        input.dataset.traitId = trait.id;
-
-        const text = document.createElement('span');
-        text.append(document.createTextNode(trait.label_de || trait.label_en || trait.prompt));
-        const small = document.createElement('small');
-        small.textContent = `${trait.prompt} — ${trait.description_de || ''}`;
-        text.append(small);
-
-        label.append(input, text);
-        list.append(label);
-      }
-
-      section.append(list);
-      details.append(section);
-    }
-
-    root.append(details);
-  }
+  renderOverview();
 }
 
-function updateOutput(){const safety=checkSafety(state.freeText,data.safety),message=$('#safetyMessage');if(!safety.ok){message.textContent=`Freie Ergänzung blockiert (${[...new Set(safety.matches.map(m=>m.category))].join(', ')}).`;message.className='message error';$('#promptOutput').value='';}else{const issues=validateSelection(state,traitIndex);message.textContent=issues.length?issues.join(' · '):'';message.className='message';const prompt=buildPrompt(state,traitIndex),finalSafety=checkSafety(prompt,data.safety);$('#promptOutput').value=finalSafety.ok?prompt:'';if(!finalSafety.ok){message.textContent='Der zusammengesetzte Prompt wurde durch die Sicherheitsprüfung blockiert.';message.className='message error';}}$('#negativeOutput').value=buildNegativePrompt(data.negative);saveState();}
+function selectedCount(traits){return traits.reduce((n,t)=>n+(state.selected.has(t.id)?1:0),0);}
+function renderOverview(){
+  const sexLabel=state.sex==='female'?'Frau':state.sex==='male'?'Mann':'Neutral';
+  $('#personSummary').textContent=`${sexLabel} · ${state.age}`;
+  const nav=$('#sectionNav');nav.replaceChildren();
+  const totals=[];
+  for(const [category,item] of renderedCategories){
+    const allTraits=item.groups.flatMap(g=>g.traits); const total=selectedCount(allTraits); totals.push(`${item.meta?.title_de||category} ${total}`);
+    const heading=document.createElement('a');heading.className='nav-category';heading.href=`#${item.details.id}`;heading.textContent=item.meta?.title_de||category;heading.addEventListener('click',()=>{item.details.open=true;});nav.append(heading);
+    for(const group of item.groups){const count=selectedCount(group.traits);const a=document.createElement('a');a.className=`nav-link${count?' has-selection':''}`;a.href=`#${group.section.id}`;a.innerHTML=`<span class="nav-dot"></span><span>${subLabel(group.subcategory)}</span><span class="nav-count">${count}</span>`;a.addEventListener('click',()=>{item.details.open=true;});nav.append(a);}
+  }
+  $('#selectionSummary').innerHTML=`<strong>${sexLabel} · ${state.age}</strong><span>${totals.join(' · ')}</span>`;
+}
+
+function updateOutput(){const safety=checkSafety(state.freeText,data.safety),message=$('#safetyMessage');if(!safety.ok){message.textContent=`Freie Ergänzung blockiert (${[...new Set(safety.matches.map(m=>m.category))].join(', ')}).`;message.className='message error';$('#promptOutput').value='';}else{const issues=validateSelection(state,traitIndex);message.textContent=issues.length?issues.join(' · '):'';message.className='message';const prompt=buildPrompt(state,traitIndex),finalSafety=checkSafety(prompt,data.safety);$('#promptOutput').value=finalSafety.ok?prompt:'';if(!finalSafety.ok){message.textContent='Der zusammengesetzte Prompt wurde durch die Sicherheitsprüfung blockiert.';message.className='message error';}}$('#negativeOutput').value=buildNegativePrompt(data.negative);saveState();renderOverview();}
 function syncControls(){$('#sex').value=state.sex;$('#age').value=state.age;$('#freeText').value=state.freeText;}
-
-async function copyText(text){
-  if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(text);return;}
-  const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.focus();area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('Kopieren fehlgeschlagen');
-}
+async function copyText(text){if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return;}const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.focus();area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('Kopieren fehlgeschlagen');}
 function flash(button,text='Kopiert'){const old=button.textContent;button.textContent=text;setTimeout(()=>button.textContent=old,900);}
 function profiles(){try{return JSON.parse(localStorage.getItem(PROFILE_KEY))||{};}catch{return {};}}
 function renderProfiles(selected=''){const select=$('#profileSelect');select.innerHTML='<option value="">– Profil wählen –</option>';for(const name of Object.keys(profiles()).sort((a,b)=>a.localeCompare(b,'de'))){const o=document.createElement('option');o.value=o.textContent=name;select.append(o);}select.value=selected;}
