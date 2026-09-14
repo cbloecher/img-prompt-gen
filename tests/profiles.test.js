@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { selectTrait } from '../js/generator.js';
 import {
   PROFILE_KEY_V1,
   PROFILE_KEY_V2,
@@ -53,6 +54,16 @@ test('loading a scoped profile replaces only that area and ignores stale ids', (
   const valid = new Set(index.keys());
   const merged = mergeScopedSelection(new Set(['body-a', 'scene-a']), ['image-a', 'stale'], 'image', index, valid);
   assert.deepEqual([...merged].sort(), ['body-a', 'image-a', 'scene-a']);
+});
+
+test('exclusive trait groups remain exclusive when profile traits are applied', () => {
+  const a = { id: 'brown', selection: { mode: 'single', group: 'hair_color' }, conflicts: [], implies: [] };
+  const b = { id: 'blonde', selection: { mode: 'single', group: 'hair_color' }, conflicts: [], implies: [] };
+  const index = new Map([[a.id, a], [b.id, b]]);
+  const profileState = { selected: new Set() };
+  selectTrait(profileState, a, true, index);
+  selectTrait(profileState, b, true, index);
+  assert.deepEqual([...profileState.selected], ['blonde']);
 });
 
 test('profile CRUD is unique by scope and name', () => {
