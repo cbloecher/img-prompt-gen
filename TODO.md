@@ -11,5 +11,6 @@ Offene Aufgaben werden als GitHub-Issues geführt. Details und Begründungen sie
 - [#12 Modelladapter für Generic, FLUX und SDXL spezifizieren](https://github.com/cbloecher/img-prompt-gen/issues/12)
 - [#13 JSON Import/Export für Auswahl und Profile ergänzen](https://github.com/cbloecher/img-prompt-gen/issues/13)
 - [#14 Spätere Erweiterungen bewerten](https://github.com/cbloecher/img-prompt-gen/issues/14)
+- [#15 ImageLexicon systematisch gegen unsere Taxonomie reviewen](https://github.com/cbloecher/img-prompt-gen/issues/15)
 
 Die Issues sind die maßgebliche Quelle für Status, Anforderungen und Akzeptanzkriterien; diese Datei dient nur als kompakter Überblick.
