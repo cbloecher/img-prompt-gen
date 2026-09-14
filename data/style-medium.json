@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "category": "style_medium",
+    "title_en": "Style & medium",
+    "title_de": "Stil & Medium",
+    "description_en": "Visual medium and broad rendering style, separated from realism, mood and shot style.",
+    "description_de": "Visuelles Medium und grober Darstellungsstil, getrennt von Realismus, Stimmung und Aufnahmestil.",
+    "guidance": {
+      "effect_en": "Use this category for the medium itself, not for camera, lighting or emotional atmosphere.",
+      "effect_de": "Diese Kategorie beschreibt das Medium selbst, nicht Kamera, Licht oder emotionale Atmosphäre.",
+      "combination_en": "Select one primary medium and add other image characteristics separately.",
+      "combination_de": "Ein primäres Medium wählen und weitere Bildeigenschaften separat ergänzen."
+    }
+  },
+  "traits": [
+    {"id":"medium_photography","prompt":"photographic image","label_en":"Photography","label_de":"Fotografie","description_en":"Image should read primarily as a photograph.","description_de":"Das Bild soll primär wie eine Fotografie wirken.","category":"style_medium","subcategory":"medium","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"visual_medium"},"tags":["medium","photography"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"medium_analog_film","prompt":"analog film photography","label_en":"Analog film photography","label_de":"Analoge Filmfotografie","description_en":"Photographic medium with an analog-film character.","description_de":"Fotografisches Medium mit analogem Filmcharakter.","category":"style_medium","subcategory":"medium","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"visual_medium"},"tags":["medium","photography","film"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"medium_digital_photo","prompt":"digital photography","label_en":"Digital photography","label_de":"Digitale Fotografie","description_en":"Clean contemporary digital photographic medium.","description_de":"Zeitgenössisches digitales fotografisches Medium.","category":"style_medium","subcategory":"medium","applies_to":["all"],"age_range":{"min":null,"max":null},"selection":{"mode":"single","group":"visual_medium"},"tags":["medium","photography","digital"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
