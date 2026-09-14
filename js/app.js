@@ -3,87 +3,37 @@ import { state, restoreState, saveState, clearState } from './state.js';
 import { checkSafety } from './safety.js';
 import { buildTraitIndex, traitApplies, selectTrait, validateSelection, buildPrompt, buildNegativePrompt } from './generator.js';
 
-const $ = selector => document.querySelector(selector);
+const $ = s => document.querySelector(s);
+const PROFILE_KEY = 'img-prompt-gen-profiles-v1';
 let data, traitIndex;
 
 function renderCategories() {
-  const root = $('#categories');
-  root.replaceChildren();
-  for (const doc of data.docs) {
-    const visible = (doc.traits || []).filter(t => traitApplies(t, state.sex, state.age));
-    if (!visible.length) continue;
-    const details = document.createElement('details');
-    details.open = ['body', 'face', 'skin'].includes(doc.meta?.category);
-    const summary = document.createElement('summary');
-    summary.textContent = doc.meta?.title_de || doc.meta?.category || 'Merkmale';
-    details.append(summary);
-
-    const groups = Map.groupBy(visible, t => t.subcategory || 'general');
-    for (const [subcategory, traits] of groups) {
-      const section = document.createElement('section'); section.className = 'subcategory';
-      const h3 = document.createElement('h3'); h3.textContent = subcategory.replaceAll('_', ' '); section.append(h3);
-      const list = document.createElement('div'); list.className = 'traits';
-      for (const trait of traits) {
-        const label = document.createElement('label'); label.className = 'trait';
-        const input = document.createElement('input');
-        input.type = trait.selection?.mode === 'single' && trait.selection?.group ? 'radio' : 'checkbox';
-        if (input.type === 'radio') input.name = `group-${trait.selection.group}`;
-        input.checked = state.selected.has(trait.id); input.dataset.traitId = trait.id;
-        const text = document.createElement('span');
-        text.append(document.createTextNode(trait.label_de || trait.label_en || trait.prompt));
-        const small = document.createElement('small'); small.textContent = `${trait.prompt} — ${trait.description_de || ''}`; text.append(small);
-        label.append(input, text); list.append(label);
-      }
-      section.append(list); details.append(section);
-    }
-    root.append(details);
-  }
+  const root=$('#categories'); root.replaceChildren();
+  for(const doc of data.docs){const visible=(doc.traits||[]).filter(t=>traitApplies(t,state.sex,state.age)); if(!visible.length)continue;
+    const details=document.createElement('details'); details.open=['body','face','skin'].includes(doc.meta?.category); const summary=document.createElement('summary'); summary.textContent=doc.meta?.title_de||doc.meta?.category||'Merkmale'; details.append(summary);
+    const groups=Map.groupBy(visible,t=>t.subcategory||'general');
+    for(const [subcategory,traits] of groups){const section=document.createElement('section');section.className='subcategory';const h3=document.createElement('h3');h3.textContent=subcategory.replaceAll('_',' ');section.append(h3);const list=document.createElement('div');list.className='traits';
+      for(const trait of traits){const label=document.createElement('label');label.className='trait';const input=document.createElement('input');input.type=trait.selection?.mode==='single'&&trait.selection?.group?'radio':'checkbox';if(input.type==='radio')input.name=`group-${trait.selection.group}`;input.checked=state.selected.has(trait.id);input.dataset.traitId=trait.id;const text=document.createElement('span');text.append(document.createTextNode(trait.label_de||trait.label_en||trait.prompt));const small=document.createElement('small');small.textContent=`${trait.prompt} — ${trait.description_de||''}`;text.append(small);label.append(input,text);list.append(label);} section.append(list);details.append(section);} root.append(details);}
 }
+function updateOutput(){const safety=checkSafety(state.freeText,data.safety),message=$('#safetyMessage');if(!safety.ok){message.textContent=`Freie Ergänzung blockiert (${[...new Set(safety.matches.map(m=>m.category))].join(', ')}).`;message.className='message error';$('#promptOutput').value='';}else{const issues=validateSelection(state,traitIndex);message.textContent=issues.length?issues.join(' · '):'';message.className='message';const prompt=buildPrompt(state,traitIndex),finalSafety=checkSafety(prompt,data.safety);$('#promptOutput').value=finalSafety.ok?prompt:'';if(!finalSafety.ok){message.textContent='Der zusammengesetzte Prompt wurde durch die Sicherheitsprüfung blockiert.';message.className='message error';}}$('#negativeOutput').value=buildNegativePrompt(data.negative);saveState();}
+function syncControls(){$('#sex').value=state.sex;$('#age').value=state.age;$('#freeText').value=state.freeText;}
 
-function updateOutput() {
-  const safety = checkSafety(state.freeText, data.safety);
-  const message = $('#safetyMessage');
-  if (!safety.ok) {
-    message.textContent = `Freie Ergänzung blockiert (${[...new Set(safety.matches.map(m => m.category))].join(', ')}).`;
-    message.className = 'message error';
-    $('#promptOutput').value = '';
-  } else {
-    const issues = validateSelection(state, traitIndex);
-    message.textContent = issues.length ? issues.join(' · ') : '';
-    message.className = 'message';
-    const prompt = buildPrompt(state, traitIndex);
-    const finalSafety = checkSafety(prompt, data.safety);
-    $('#promptOutput').value = finalSafety.ok ? prompt : '';
-    if (!finalSafety.ok) { message.textContent = 'Der zusammengesetzte Prompt wurde durch die Sicherheitsprüfung blockiert.'; message.className = 'message error'; }
-  }
-  $('#negativeOutput').value = buildNegativePrompt(data.negative);
-  saveState();
+async function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(text);return;}
+  const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.focus();area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('Kopieren fehlgeschlagen');
 }
+function flash(button,text='Kopiert'){const old=button.textContent;button.textContent=text;setTimeout(()=>button.textContent=old,900);}
+function profiles(){try{return JSON.parse(localStorage.getItem(PROFILE_KEY))||{};}catch{return {};}}
+function renderProfiles(selected=''){const select=$('#profileSelect');select.innerHTML='<option value="">– Profil wählen –</option>';for(const name of Object.keys(profiles()).sort((a,b)=>a.localeCompare(b,'de'))){const o=document.createElement('option');o.value=o.textContent=name;select.append(o);}select.value=selected;}
+function saveProfile(){const name=$('#profileName').value.trim();if(!name){$('#profileMessage').textContent='Bitte Profilnamen eingeben.';return;}const all=profiles();all[name]={sex:state.sex,age:state.age,selected:[...state.selected],freeText:state.freeText};localStorage.setItem(PROFILE_KEY,JSON.stringify(all));renderProfiles(name);$('#profileMessage').textContent=`Profil „${name}“ gespeichert.`;}
+function loadProfile(){const name=$('#profileSelect').value,p=profiles()[name];if(!p)return;state.sex=p.sex||'all';state.age=Number(p.age)||35;state.selected=new Set(p.selected||[]);state.freeText=p.freeText||'';syncControls();renderCategories();updateOutput();$('#profileName').value=name;$('#profileMessage').textContent=`Profil „${name}“ geladen.`;}
+function deleteProfile(){const name=$('#profileSelect').value;if(!name)return;const all=profiles();delete all[name];localStorage.setItem(PROFILE_KEY,JSON.stringify(all));renderProfiles();$('#profileName').value='';$('#profileMessage').textContent=`Profil „${name}“ gelöscht.`;}
 
-function syncControls() {
-  $('#sex').value = state.sex; $('#age').value = state.age; $('#freeText').value = state.freeText;
-}
-
-async function init() {
-  try {
-    data = await loadData(); traitIndex = buildTraitIndex(data.docs); restoreState(); syncControls(); renderCategories(); updateOutput();
-
-    $('#categories').addEventListener('change', event => {
-      const id = event.target.dataset.traitId; if (!id) return;
-      selectTrait(state, traitIndex.get(id), event.target.checked, traitIndex); renderCategories(); updateOutput();
-    });
-    $('#sex').addEventListener('change', event => { state.sex = event.target.value; renderCategories(); updateOutput(); });
-    $('#age').addEventListener('change', event => { state.age = Math.max(18, Number(event.target.value) || 18); event.target.value = state.age; renderCategories(); updateOutput(); });
-    $('#freeText').addEventListener('input', event => { state.freeText = event.target.value; updateOutput(); });
-    $('#reset').addEventListener('click', () => { clearState(); syncControls(); renderCategories(); updateOutput(); });
-    document.addEventListener('click', async event => {
-      const target = event.target.dataset.copy; if (!target) return;
-      await navigator.clipboard.writeText(document.getElementById(target).value);
-      const old = event.target.textContent; event.target.textContent = 'Kopiert'; setTimeout(() => event.target.textContent = old, 900);
-    });
-  } catch (error) {
-    $('#categories').innerHTML = `<p class="message error">${error.message}. Bitte über einen lokalen HTTP-Server starten, nicht als file://.</p>`;
-  }
-}
-
+async function init(){try{data=await loadData();traitIndex=buildTraitIndex(data.docs);restoreState();syncControls();renderCategories();renderProfiles();updateOutput();
+$('#categories').addEventListener('change',e=>{const id=e.target.dataset.traitId;if(!id)return;selectTrait(state,traitIndex.get(id),e.target.checked,traitIndex);renderCategories();updateOutput();});
+$('#sex').addEventListener('change',e=>{state.sex=e.target.value;renderCategories();updateOutput();});$('#age').addEventListener('change',e=>{state.age=Math.max(18,Number(e.target.value)||18);e.target.value=state.age;renderCategories();updateOutput();});$('#freeText').addEventListener('input',e=>{state.freeText=e.target.value;updateOutput();});
+$('#reset').addEventListener('click',()=>{clearState();syncControls();renderCategories();updateOutput();});$('#saveProfile').addEventListener('click',saveProfile);$('#loadProfile').addEventListener('click',loadProfile);$('#deleteProfile').addEventListener('click',deleteProfile);
+document.addEventListener('click',async e=>{const target=e.target.dataset.copy;if(!target)return;try{await copyText(document.getElementById(target).value);flash(e.target);}catch(err){$('#safetyMessage').textContent=err.message;}});
+$('#copyAll').addEventListener('click',async e=>{const positive=$('#promptOutput').value,negative=$('#negativeOutput').value;const text=`${positive}\n\nNEGATIVE:\n${negative}`;try{await copyText(text);flash(e.target);}catch(err){$('#safetyMessage').textContent=err.message;}});
+}catch(error){$('#categories').innerHTML=`<p class="message error">${error.message}. Bitte über einen lokalen HTTP-Server starten, nicht als file://.</p>`;}}
 init();
