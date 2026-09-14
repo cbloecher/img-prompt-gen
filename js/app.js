@@ -30,9 +30,19 @@ function categoryTitle(meta={},fallback='Merkmale'){
   return en||de||fallback;
 }
 function mergedCategories(){const categories=new Map();for(const doc of data.docs){const category=doc.meta?.category||'other';if(!categories.has(category))categories.set(category,{meta:doc.meta||{category},traits:[]});categories.get(category).traits.push(...(doc.traits||[]));}return categories;}
+function groupHasSelection(group){for(const id of state.selected){if(traitIndex.get(id)?.selection?.group===group)return true;}return false;}
+function clearSelectionGroup(group){for(const id of [...state.selected]){if(traitIndex.get(id)?.selection?.group===group)state.selected.delete(id);}}
+function appendNoSpecification(list,group){
+  const label=document.createElement('label');label.className='trait trait-none';
+  const input=document.createElement('input');input.type='radio';input.name=`group-${group}`;input.checked=!groupHasSelection(group);input.dataset.clearGroup=group;
+  const en=document.createElement('span');en.className='trait-en';en.textContent='No specification';
+  const de=document.createElement('span');de.className='trait-de';de.textContent='Keine Angabe';
+  const description=document.createElement('span');description.className='trait-description';description.textContent='Keine Vorgabe für diese Auswahlgruppe.';
+  label.append(input,en,de,description);list.append(label);
+}
 
 function renderCategories(){
-  const root=$('#categories');root.replaceChildren();renderedCategories=new Map();
+  const root=$('#categories');root.replaceChildren();renderedCategories=new Map();const renderedSingleGroups=new Set();
   for(const [category,categoryDoc] of mergedCategories()){
     const visible=categoryDoc.traits.filter(t=>traitApplies(t,state.sex,state.age));if(!visible.length)continue;
     const block=document.createElement('section');block.className='category-block';block.id=`category-${slug(category)}`;block.dataset.category=category;
@@ -43,8 +53,10 @@ function renderCategories(){
       const h3=document.createElement('h3');h3.textContent=subLabel(subcategory);section.append(h3);
       const list=document.createElement('div');list.className='traits';
       for(const trait of traits){
+        const singleGroup=trait.selection?.mode==='single'&&trait.selection?.group?trait.selection.group:null;
+        if(singleGroup&&!renderedSingleGroups.has(singleGroup)){appendNoSpecification(list,singleGroup);renderedSingleGroups.add(singleGroup);}
         const label=document.createElement('label');label.className='trait';
-        const input=document.createElement('input');input.type=trait.selection?.mode==='single'&&trait.selection?.group?'radio':'checkbox';if(input.type==='radio')input.name=`group-${trait.selection.group}`;input.checked=state.selected.has(trait.id);input.dataset.traitId=trait.id;
+        const input=document.createElement('input');input.type=singleGroup?'radio':'checkbox';if(input.type==='radio')input.name=`group-${singleGroup}`;input.checked=state.selected.has(trait.id);input.dataset.traitId=trait.id;
         const en=document.createElement('span');en.className='trait-en';en.textContent=trait.prompt||trait.label_en||'';
         const de=document.createElement('span');de.className='trait-de';de.textContent=trait.label_de||trait.label_en||trait.prompt||'';
         const description=document.createElement('span');description.className='trait-description';description.textContent=trait.description_de||'';
@@ -121,7 +133,7 @@ function deleteProfile(){
 }
 
 async function init(){try{data=await loadData();traitIndex=buildTraitIndex(data.docs);traitScopeIndex=buildTraitScopeIndex(data.docs,NAV_GROUPS);restoreState();syncControls();renderCategories();renderProfiles();updateOutput();
-$('#categories').addEventListener('change',e=>{const id=e.target.dataset.traitId;if(!id)return;selectTrait(state,traitIndex.get(id),e.target.checked,traitIndex);renderCategories();updateOutput();});
+$('#categories').addEventListener('change',e=>{const clearGroup=e.target.dataset.clearGroup;if(clearGroup){clearSelectionGroup(clearGroup);renderCategories();updateOutput();return;}const id=e.target.dataset.traitId;if(!id)return;selectTrait(state,traitIndex.get(id),e.target.checked,traitIndex);renderCategories();updateOutput();});
 $('#sex').addEventListener('change',e=>{state.sex=e.target.value;renderCategories();updateOutput();});$('#age').addEventListener('change',e=>{state.age=Math.max(18,Number(e.target.value)||18);e.target.value=state.age;renderCategories();updateOutput();});$('#freeText').addEventListener('input',e=>{state.freeText=e.target.value;updateOutput();});
 $('#reset').addEventListener('click',()=>{clearState();syncControls();renderCategories();updateOutput();});$('#profileScope').addEventListener('change',()=>{renderProfiles();$('#profileName').value='';$('#profileMessage').textContent='';});$('#profileSelect').addEventListener('change',e=>{$('#profileName').value=e.target.value;});$('#saveProfile').addEventListener('click',saveProfile);$('#loadProfile').addEventListener('click',loadProfile);$('#deleteProfile').addEventListener('click',deleteProfile);
 document.addEventListener('click',async e=>{const target=e.target.dataset.copy;if(!target)return;try{await copyText(document.getElementById(target).value);flash(e.target);}catch(err){$('#safetyMessage').textContent=err.message;}});
