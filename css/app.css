@@ -13,12 +13,17 @@ select, input, textarea, button { font: inherit; }
 select, input, textarea { width: 100%; padding: .65rem; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); border-radius: .4rem; background: transparent; }
 textarea { resize: vertical; }
 button { padding: .55rem .85rem; cursor: pointer; }
+.search-panel h2 { margin-bottom: .6rem; }
+.search-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .65rem; align-items: end; }
+.search-field { min-width: 0; }
 .subcategory { margin-top: 1.15rem; scroll-margin-top: 1rem; }
 .subcategory h3 { font-size: .95rem; margin-bottom: .35rem; opacity: .8; }
 .traits { display: grid; }
-.trait { display: grid; grid-template-columns: 1.4rem minmax(180px, .9fr) minmax(150px, .75fr) minmax(260px, 1.6fr); gap: .65rem; align-items: center; padding: .42rem .25rem; border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent); }
+.trait { display: grid; grid-template-columns: 1.4rem minmax(180px, .9fr) minmax(150px, .75fr) minmax(260px, 1.6fr); gap: .65rem; align-items: center; padding: .42rem .25rem; border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent); border-radius: .25rem; }
 .trait:first-child { border-top: 0; }
 .trait:hover { background: color-mix(in srgb, currentColor 5%, transparent); }
+.trait.search-match { background: color-mix(in srgb, #ffd84d 22%, transparent); }
+.trait.search-match:hover { background: color-mix(in srgb, #ffd84d 30%, transparent); }
 .trait input { width: auto; margin: 0; }
 .trait-en { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .86rem; }
 .trait-de { font-weight: 600; font-size: .9rem; }
@@ -50,6 +55,7 @@ button { padding: .55rem .85rem; cursor: pointer; }
   .overview h2, .section-nav { display: none; }
   .person-summary { border: 0; margin: 0; padding: 0; font-size: .85rem; }
   .app { margin-top: 1rem; }
+  .search-row { grid-template-columns: 1fr; }
   .trait { grid-template-columns: 1.4rem 1fr; gap: .3rem .6rem; }
   .trait-de, .trait-description { grid-column: 2; }
 }
