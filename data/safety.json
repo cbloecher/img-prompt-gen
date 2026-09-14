@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "title_en": "Free-text safety policy",
+    "title_de": "Sicherheitsregeln für Freitext",
+    "description_en": "Rule data for keeping free-form additions focused on non-explicit portraits of adults. Curated trait JSON remains the preferred input path.",
+    "description_de": "Regeldaten, um freie Zusatzeingaben auf nicht-explizite Darstellungen erwachsener Personen zu begrenzen. Kuratierte JSON-Merkmale bleiben der bevorzugte Eingabeweg.",
+    "policy": {
+      "adult_only": true,
+      "minimum_age": 18,
+      "check_positive_prompt": true,
+      "check_negative_prompt": true,
+      "check_all_free_text_fields": true,
+      "default_action_for_explicit_anatomy": "block",
+      "default_action_for_sexual_activity": "block",
+      "default_action_for_pornographic_context": "block"
+    }
+  },
+  "normalization": {
+    "lowercase": true,
+    "unicode_normalization": "NFKC",
+    "collapse_whitespace": true,
+    "normalize_common_separators": true,
+    "match_word_boundaries": true,
+    "detect_common_obfuscation": true
+  },
+  "rules": [
+    {
+      "id": "age_minor",
+      "action": "block",
+      "category": "age",
+      "description_en": "Block prompts that indicate a person below 18 or sexualized youth terminology.",
+      "description_de": "Prompts blockieren, die eine Person unter 18 oder sexualisierte Jugendbegriffe angeben.",
+      "patterns": ["underage", "minor", "child", "teenage girl", "teenage boy", "schoolgirl", "schoolboy", "young-looking minor"]
+    },
+    {
+      "id": "explicit_genital_anatomy",
+      "action": "block",
+      "category": "explicit_anatomy",
+      "description_en": "Block explicit descriptions of genital anatomy and slang referring to it.",
+      "description_de": "Explizite Beschreibungen der Genitalanatomie sowie entsprechende Slangbegriffe blockieren.",
+      "patterns": ["vulva", "vagina", "labia", "clitoris", "penis", "testicles", "scrotum", "pussy", "cock", "dick"]
+    },
+    {
+      "id": "explicit_breast_detail",
+      "action": "block",
+      "category": "explicit_anatomy",
+      "description_en": "Block free-text emphasis on exposed intimate breast anatomy while allowing ordinary breast/chest shape traits from curated data.",
+      "description_de": "Freitext mit Betonung entblößter intimer Brustanatomie blockieren; gewöhnliche Brust-/Brustkorb-Formmerkmale aus kuratierten Daten bleiben zulässig.",
+      "patterns": ["exposed nipples", "visible nipples", "bare nipples", "areola", "areolas"]
+    },
+    {
+      "id": "explicit_body_hair_combinations",
+      "action": "block",
+      "category": "explicit_anatomy",
+      "description_en": "Block common explicit phrases combining intimate anatomy with body-hair descriptions.",
+      "description_de": "Typische explizite Formulierungen blockieren, die intime Anatomie mit Körperbehaarung kombinieren.",
+      "patterns": ["hairy pussy", "hairy vulva", "shaved pussy", "shaved vulva", "pubic hair on exposed genitals"]
+    },
+    {
+      "id": "sexual_activity",
+      "action": "block",
+      "category": "sexual_activity",
+      "description_en": "Block descriptions of sexual acts, intercourse, masturbation and explicit sexual contact.",
+      "description_de": "Beschreibungen sexueller Handlungen, Geschlechtsverkehr, Masturbation und expliziten sexuellen Kontakts blockieren.",
+      "patterns": ["sexual intercourse", "having sex", "masturbating", "masturbation", "oral sex", "anal sex", "penetration", "sexual penetration", "genital contact", "sexual touching"]
+    },
+    {
+      "id": "explicit_positions",
+      "action": "block",
+      "category": "sexual_activity",
+      "description_en": "Block terminology whose ordinary meaning in an image prompt is a sexual position rather than a neutral body pose.",
+      "description_de": "Begriffe blockieren, deren übliche Bedeutung in einem Bildprompt eine sexuelle Stellung statt einer neutralen Körperpose ist.",
+      "patterns": ["missionary position", "doggy style", "cowgirl position", "reverse cowgirl", "sixty-nine position", "69 position"]
+    },
+    {
+      "id": "pornographic_context",
+      "action": "block",
+      "category": "pornographic_context",
+      "description_en": "Block requests that explicitly frame the desired image as pornography or explicit sexual content.",
+      "description_de": "Anfragen blockieren, die das gewünschte Bild ausdrücklich als Pornografie oder explizit sexuellen Inhalt einordnen.",
+      "patterns": ["pornographic", "porn scene", "hardcore porn", "explicit sex scene", "XXX scene", "NSFW sex scene"]
+    },
+    {
+      "id": "sexualized_expression_context",
+      "action": "block",
+      "category": "sexualized_context",
+      "description_en": "Block facial-expression phrases when they explicitly describe sexual activity or orgasm rather than ordinary emotion.",
+      "description_de": "Gesichtsausdrücke blockieren, wenn sie ausdrücklich sexuelle Aktivität oder Orgasmus statt gewöhnlicher Emotion beschreiben.",
+      "patterns": ["orgasm face", "orgasmic expression", "expression during orgasm", "sex face", "ahegao"]
+    },
+    {
+      "id": "explicit_exposure",
+      "action": "block",
+      "category": "explicit_exposure",
+      "description_en": "Block instructions whose purpose is explicit genital exposure.",
+      "description_de": "Anweisungen blockieren, deren Zweck die explizite Darstellung bzw. Entblößung von Genitalien ist.",
+      "patterns": ["genitals exposed", "exposed genitals", "spread legs showing genitals", "explicit genital close-up", "genital close-up"]
+    }
+  ],
+  "allowed_examples": {
+    "body": ["small breasts", "medium-sized breasts", "natural breast shape", "broad hips", "soft lower abdomen", "full thighs", "natural body hair", "underarm hair"],
+    "pose": ["cross-legged sitting", "kneeling", "leaning forward", "hands resting on thighs", "one hand on hip"],
+    "expression": ["relaxed expression", "faint smile", "playful expression", "confident expression", "eyes half-closed"],
+    "realism": ["visible pores", "freckles", "age spots", "fine body hair", "natural skin folds"]
+  }
+}
