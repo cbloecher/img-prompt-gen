@@ -1,13 +1,15 @@
 # TODO
 
-Details und Begründungen siehe [Recherche bestehender Projekte](docs/research-existing-projects.md), [Datenmodell](docs/data-model.md) und [Safety](docs/safety.md).
+Offene Aufgaben werden als GitHub-Issues geführt. Details und Begründungen siehe außerdem [Recherche bestehender Projekte](docs/research-existing-projects.md), [Datenmodell](docs/data-model.md) und [Safety](docs/safety.md).
 
-- [ ] Taxonomie für **Szene** ergänzen: Kleidung, Umgebung/Ort, Interaktion/Objekte, Situation.
-- [ ] Taxonomie für **Bild** vervollständigen: Kamera, Perspektive, Ausschnitt/Komposition und Licht ergänzen; vorhandene Aufnahmeart, Stimmung und Realismus/Style passend einordnen.
-- [ ] Trait-Suche über alle Kategorien ergänzen.
-- [ ] Strukturierte Prompt-IR zwischen Auswahl und finalem Prompt-String spezifizieren.
-- [ ] Prompt-Reihenfolge explizit definieren; nicht aus Datei-/DOM-Reihenfolge ableiten.
-- [ ] Constraint-aware **Variieren/Randomisieren** pro Unterkategorie vorsehen.
-- [ ] Modelladapter für Generic / FLUX / SDXL spezifizieren.
-- [ ] JSON Import/Export für Auswahl/Profile vorsehen.
-- [ ] Später prüfen: Gewichtung, Undo/Redo, Tokenzähler, Wildcard-Export, optionaler LLM-Enhancer.
+- [#6 Szene-Taxonomie ergänzen](https://github.com/cbloecher/img-prompt-gen/issues/6)
+- [#7 Bild-Taxonomie vervollständigen](https://github.com/cbloecher/img-prompt-gen/issues/7)
+- [#8 Trait-Suche über alle Kategorien ergänzen](https://github.com/cbloecher/img-prompt-gen/issues/8)
+- [#9 Strukturierte Prompt-IR spezifizieren](https://github.com/cbloecher/img-prompt-gen/issues/9)
+- [#10 Prompt-Reihenfolge explizit definieren](https://github.com/cbloecher/img-prompt-gen/issues/10)
+- [#11 Constraint-aware Variieren und Randomisieren ergänzen](https://github.com/cbloecher/img-prompt-gen/issues/11)
+- [#12 Modelladapter für Generic, FLUX und SDXL spezifizieren](https://github.com/cbloecher/img-prompt-gen/issues/12)
+- [#13 JSON Import/Export für Auswahl und Profile ergänzen](https://github.com/cbloecher/img-prompt-gen/issues/13)
+- [#14 Spätere Erweiterungen bewerten](https://github.com/cbloecher/img-prompt-gen/issues/14)
+
+Die Issues sind die maßgebliche Quelle für Status, Anforderungen und Akzeptanzkriterien; diese Datei dient nur als kompakter Überblick.
