@@ -4,7 +4,7 @@ Simple, model-agnostic image prompt generator based on structured prompt traits.
 
 ## Goal
 
-The project builds image prompts from reusable characteristics instead of maintaining large fixed prompts. The first focus is realistic adult people: skin, face, hair, body proportions, age, posture and general realism.
+The project builds image prompts from reusable characteristics instead of maintaining large fixed prompts. The first focus is realistic adult people: skin, face, hair, body proportions, age, expression, gaze, pose and photographic realism.
 
 The data layer is intentionally independent from SDXL, FLUX or a specific UI. Model-specific rendering rules can later live under `models/`.
 
@@ -21,7 +21,12 @@ img-prompt-gen/
     ├── face.json
     ├── hair.json
     ├── skin.json
-    ├── posture.json
+    ├── posture.json          # legacy/initial posture traits; migrate into pose as needed
+    ├── pose.json             # whole-body, posture, hands, arms and legs
+    ├── expression.json       # facial expression
+    ├── gaze.json             # gaze, eye state and head pose
+    ├── mood.json             # overall emotional atmosphere
+    ├── shot-style.json       # photographic/staging character
     ├── realism.json
     └── negative.json
 ```
@@ -37,6 +42,7 @@ img-prompt-gen/
 - `requires`, `conflicts` and `implies` allow later validation and automatic suggestions.
 - Model-specific syntax and weights do not belong in the trait data.
 - Negative prompts are kept separately in `negative.json`.
+- Anatomy, expression, pose, gaze, mood and photographic style remain separate dimensions so the generator can combine them independently.
 
 See [docs/data-model.md](docs/data-model.md) for the JSON syntax and semantics.
 
