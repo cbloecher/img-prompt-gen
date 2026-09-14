@@ -24,6 +24,20 @@ Every category file has a metadata header and a `traits` array.
 }
 ```
 
+### Required category metadata
+
+Every trait/category data file **must** define all three of the following fields:
+
+- `meta.category` — stable machine-readable category ID.
+- `meta.title_en` — English UI title.
+- `meta.title_de` — German UI title.
+
+`title_en` and `title_de` are part of the category contract, not optional decoration. The trait-selection UI renders category titles bilingually as `title_en / title_de`.
+
+If several files intentionally use the same `meta.category`, they are merged into one UI category. In that case their `title_en` and `title_de` values must be identical. If a file needs its own visible title, it must use its own category ID or be represented explicitly as a subcategory. This avoids losing metadata when category files are merged.
+
+Example: hair styling and hair color/effects are separate visible categories (`hair` and `hair_color_effects`) even though their traits can share selection groups such as `hair_color`.
+
 `meta.guidance` describes the general effect of a category and gives advice about useful combinations. It is explanatory UI content, not part of the generated prompt.
 
 ## Trait syntax
@@ -74,6 +88,8 @@ Every category file has a metadata header and a `traits` array.
 A `single` group acts like a radio-button group. For example, `narrow shoulders` and `broad shoulders` both belong to `shoulder_width`; selecting one replaces the other.
 
 `multiple` traits can normally coexist, e.g. visible pores + freckles + subtle redness. Explicit exceptions can be listed in `conflicts`.
+
+Selection groups are global across category boundaries. This allows, for example, base hair colors from `hair` and `hair_color_effects` to remain mutually exclusive through the shared `hair_color` group.
 
 ## `applies_to`
 
