@@ -10,15 +10,16 @@ let renderedCategories = new Map();
 
 const NAV_GROUPS = [
   { id:'person', label:'Person', categories:['age','body','face','skin','hair','hair_color_effects','expression','gaze','pose'] },
-  { id:'scene', label:'Szene', categories:['clothing','environment','location','interaction','objects','situation'] },
-  { id:'image', label:'Bild', categories:['camera','perspective','composition','framing','lighting','shot_style','mood','realism','style'] }
+  { id:'scene', label:'Szene', categories:['clothing','location','environment','weather_time','background','interaction','objects','situation'] },
+  { id:'image', label:'Bild', categories:['camera','perspective','framing','composition','lighting','focus_depth_of_field','shot_style','mood','style_medium','realism'] }
 ];
 
 const SUBCATEGORY_LABELS = {
   general:'Allgemein', build:'Körperbau', proportions:'Proportionen', breast:'Brust', hips:'Hüfte', legs:'Beine', arms:'Arme', details:'Details', aging:'Alterung',
   length:'Länge', texture:'Struktur', style:'Frisur', color:'Grundfarbe', color_effects:'Farbeffekte', roots_regrowth:'Ansatz / herausgewachsen', dye_condition:'Färbezustand', realism:'Realismus',
   base_pose:'Grundpose', posture:'Haltung', leg_pose:'Beine', hand_pose:'Hände', arm_pose:'Arme',
-  face_shape:'Gesichtsform', forehead:'Stirn', cheeks_jaw:'Wangen / Kiefer', eyes:'Augen', eye_details:'Augendetails', eye_color:'Augenfarbe', eyebrows:'Augenbrauen', nose:'Nase', mouth_lips:'Mund / Lippen', teeth:'Zähne', ears:'Ohren', facial_hair:'Gesichtsbehaarung', individualization:'Individualisierung'
+  face_shape:'Gesichtsform', forehead:'Stirn', cheeks_jaw:'Wangen / Kiefer', eyes:'Augen', eye_details:'Augendetails', eye_color:'Augenfarbe', eyebrows:'Augenbrauen', nose:'Nase', mouth_lips:'Mund / Lippen', teeth:'Zähne', ears:'Ohren', facial_hair:'Gesichtsbehaarung', individualization:'Individualisierung',
+  type:'Art', time:'Tageszeit', weather:'Wetter', focus:'Fokus', depth_of_field:'Schärfentiefe', optical_effect:'Optischer Effekt', medium:'Medium'
 };
 
 function groupBy(items,keyFn){const groups=new Map();for(const item of items){const key=keyFn(item);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item);}return groups;}
