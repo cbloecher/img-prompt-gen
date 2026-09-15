@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises';
 
 const PERSON_FILES = [
   'identity.json', 'body.json', 'face.json', 'skin.json', 'hair.json',
-  'hair-color-effects.json', 'expression.json', 'head-gaze.json', 'pose.json', 'wearables.json'
+  'hair-color-effects.json', 'expression.json', 'head-gaze.json', 'pose.json',
+  'pose-naturalism.json', 'wearables.json'
 ];
 
 async function readJson(path) {
