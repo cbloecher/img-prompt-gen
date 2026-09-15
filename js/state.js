@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'img-prompt-gen-state-v1';
+const STORAGE_KEY = 'img-prompt-gen-state-v2';
 
 export const state = {
   sex: 'all',
