@@ -170,10 +170,10 @@ person.face.shape
 person.face.nose.shape
 person.skin.tone
 person.hair.length
-person.hair.color.base
+person.hair_color_effects.base_color
 person.expression.base
-person.head_gaze.direction
-person.pose.base
+person.head_gaze.gaze_direction
+person.pose.base_position
 ```
 
 A `single` group behaves like a radio-button group: selecting one trait replaces another trait from the same group.
