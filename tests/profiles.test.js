@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { selectTrait } from '../js/generator.js';
 import {
-  PROFILE_KEY_V1,
-  PROFILE_KEY_V2,
+  PROFILE_KEY_V3,
   readProfiles,
+  writeProfiles,
   upsertProfile,
   deleteProfileEntry,
   buildTraitScopeIndex,
@@ -18,58 +18,57 @@ class MemoryStorage {
   setItem(key, value) { this.map.set(key, String(value)); }
 }
 
-const navGroups = [
-  { id: 'person', categories: ['body', 'hair'] },
-  { id: 'scene', categories: ['environment'] },
-  { id: 'image', categories: ['lighting'] }
-];
 const docs = [
-  { meta: { category: 'body' }, traits: [{ id: 'body-a' }] },
-  { meta: { category: 'environment' }, traits: [{ id: 'scene-a' }] },
-  { meta: { category: 'lighting' }, traits: [{ id: 'image-a' }] },
-  { meta: { category: 'custom' }, traits: [{ id: 'other-a' }] }
+  { meta: { domain: 'person', taxonomy: ['body'] }, traits: [{ id: 'person.body.a', domain: 'person', taxonomy: ['body'] }] },
+  { meta: { domain: 'scene', taxonomy: ['environment'] }, traits: [{ id: 'scene.environment.a', domain: 'scene', taxonomy: ['environment'] }] },
+  { meta: { domain: 'image', taxonomy: ['lighting'] }, traits: [{ id: 'image.lighting.a', domain: 'image', taxonomy: ['lighting'] }] },
+  { meta: { domain: 'other', taxonomy: ['custom'] }, traits: [{ id: 'other.custom.a', domain: 'other', taxonomy: ['custom'] }] }
 ];
 
-test('legacy profiles migrate to Gesamt profiles', () => {
-  const storage = new MemoryStorage({
-    [PROFILE_KEY_V1]: JSON.stringify({ Alt: { sex: 'female', age: 42, selected: ['body-a'], freeText: 'soft light' } })
-  });
-  const profiles = readProfiles(storage);
-  assert.equal(profiles.length, 1);
-  assert.deepEqual(profiles[0], { name: 'Alt', scope: 'all', selected: ['body-a'], sex: 'female', age: 42, freeText: 'soft light' });
-  assert.ok(storage.getItem(PROFILE_KEY_V2));
+test('profiles use the v3 store without legacy migration', () => {
+  const storage = new MemoryStorage();
+  const expected = [{ name: 'Neu', scope: 'person', selected: ['person.body.a'], sex: 'female', age: 42 }];
+  writeProfiles(expected, storage);
+  assert.equal(storage.getItem(PROFILE_KEY_V3), JSON.stringify(expected));
+  assert.deepEqual(readProfiles(storage), expected);
 });
 
-test('scoped selection only returns traits from requested area', () => {
-  const index = buildTraitScopeIndex(docs, navGroups);
-  const selected = new Set(['body-a', 'scene-a', 'image-a', 'other-a']);
-  assert.deepEqual(selectedForScope(selected, 'person', index), ['body-a']);
-  assert.deepEqual(selectedForScope(selected, 'scene', index), ['scene-a']);
-  assert.deepEqual(selectedForScope(selected, 'image', index), ['image-a']);
-  assert.deepEqual(selectedForScope(selected, 'other', index), ['other-a']);
+test('scoped selection follows trait domains', () => {
+  const index = buildTraitScopeIndex(docs);
+  const selected = new Set(['person.body.a', 'scene.environment.a', 'image.lighting.a', 'other.custom.a']);
+  assert.deepEqual(selectedForScope(selected, 'person', index), ['person.body.a']);
+  assert.deepEqual(selectedForScope(selected, 'scene', index), ['scene.environment.a']);
+  assert.deepEqual(selectedForScope(selected, 'image', index), ['image.lighting.a']);
+  assert.deepEqual(selectedForScope(selected, 'other', index), ['other.custom.a']);
 });
 
-test('loading a scoped profile replaces only that area and ignores stale ids', () => {
-  const index = buildTraitScopeIndex(docs, navGroups);
+test('loading a scoped profile replaces only that domain and ignores stale ids', () => {
+  const index = buildTraitScopeIndex(docs);
   const valid = new Set(index.keys());
-  const merged = mergeScopedSelection(new Set(['body-a', 'scene-a']), ['image-a', 'stale'], 'image', index, valid);
-  assert.deepEqual([...merged].sort(), ['body-a', 'image-a', 'scene-a']);
+  const merged = mergeScopedSelection(
+    new Set(['person.body.a', 'scene.environment.a']),
+    ['image.lighting.a', 'stale'],
+    'image',
+    index,
+    valid
+  );
+  assert.deepEqual([...merged].sort(), ['image.lighting.a', 'person.body.a', 'scene.environment.a']);
 });
 
-test('exclusive trait groups remain exclusive when profile traits are applied', () => {
-  const a = { id: 'brown', selection: { mode: 'single', group: 'hair_color' }, conflicts: [], implies: [] };
-  const b = { id: 'blonde', selection: { mode: 'single', group: 'hair_color' }, conflicts: [], implies: [] };
+test('exclusive hierarchical trait groups remain exclusive', () => {
+  const a = { id: 'person.hair_color_effects.base_color.brown', selection: { mode: 'single', group: 'person.hair_color_effects.base_color' }, conflicts: [], implies: [] };
+  const b = { id: 'person.hair_color_effects.base_color.blonde', selection: { mode: 'single', group: 'person.hair_color_effects.base_color' }, conflicts: [], implies: [] };
   const index = new Map([[a.id, a], [b.id, b]]);
   const profileState = { selected: new Set() };
   selectTrait(profileState, a, true, index);
   selectTrait(profileState, b, true, index);
-  assert.deepEqual([...profileState.selected], ['blonde']);
+  assert.deepEqual([...profileState.selected], [b.id]);
 });
 
 test('profile CRUD is unique by scope and name', () => {
   let profiles = [];
-  profiles = upsertProfile(profiles, { scope: 'person', name: 'A', selected: ['body-a'] });
-  profiles = upsertProfile(profiles, { scope: 'scene', name: 'A', selected: ['scene-a'] });
+  profiles = upsertProfile(profiles, { scope: 'person', name: 'A', selected: ['person.body.a'] });
+  profiles = upsertProfile(profiles, { scope: 'scene', name: 'A', selected: ['scene.environment.a'] });
   profiles = upsertProfile(profiles, { scope: 'person', name: 'A', selected: [] });
   assert.equal(profiles.length, 2);
   assert.deepEqual(profiles.find(p => p.scope === 'person').selected, []);
