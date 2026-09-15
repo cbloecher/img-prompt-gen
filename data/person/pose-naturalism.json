@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "meta": {
+    "domain": "person",
+    "taxonomy": ["pose"],
+    "title_en": "Pose",
+    "title_de": "Pose",
+    "description_en": "Additional natural posture and asymmetry cues migrated from the former posture dataset.",
+    "description_de": "Zusätzliche natürliche Haltungs- und Asymmetriehinweise aus dem früheren Haltungs-Datensatz."
+  },
+  "traits": [
+    {"id":"person.pose.posture.relaxed","prompt":"relaxed posture","label_en":"Relaxed posture","label_de":"Entspannte Haltung","description_en":"Creates a relaxed rather than posed stance.","description_de":"Erzeugt eine entspannte statt inszenierte Haltung.","domain":"person","taxonomy":["pose","posture"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["pose","posture","relaxed","realism"],"requires":[],"conflicts":[],"implies":[],"notes":"Migrated from legacy posture_relaxed."},
+    {"id":"person.pose.posture.natural_standing","prompt":"natural standing posture","label_en":"Natural standing","label_de":"Natürliches Stehen","description_en":"Neutral everyday standing posture.","description_de":"Neutrale alltägliche Stehhaltung.","domain":"person","taxonomy":["pose","posture"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["pose","posture","standing","realism"],"requires":["person.pose.base_position.standing"],"conflicts":[],"implies":[],"notes":"Migrated from legacy posture_natural_standing."},
+    {"id":"person.pose.posture.uneven_shoulders","prompt":"slightly uneven shoulders","label_en":"Uneven shoulders","label_de":"Leicht ungleiche Schulterhöhe","description_en":"Adds subtle shoulder-height asymmetry caused by posture.","description_de":"Fügt eine leichte haltungsbedingte Asymmetrie der Schulterhöhe hinzu.","domain":"person","taxonomy":["pose","posture","asymmetry"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["pose","posture","shoulders","asymmetry","realism"],"requires":[],"conflicts":[],"implies":[],"notes":"Postural, not anatomical shoulder width."},
+    {"id":"person.pose.torso.slight_forward_lean","prompt":"slight forward lean","label_en":"Slight forward lean","label_de":"Leicht nach vorn geneigt","description_en":"Adds a small forward lean to the torso.","description_de":"Fügt eine leichte Vorneigung des Oberkörpers hinzu.","domain":"person","taxonomy":["pose","torso"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"single","group":"person.pose.torso.lean"},"tags":["pose","torso","lean","subtle","realism"],"requires":[],"conflicts":[],"implies":[],"notes":"More subtle alternative to leaning forward."},
+    {"id":"person.pose.posture.subtle_slouch","prompt":"subtle slouch","label_en":"Subtle slouch","label_de":"Dezent zusammengesunkene Haltung","description_en":"Reduces rigid upright posing with a subtle slouch.","description_de":"Reduziert eine starre, kerzengerade Pose durch leichtes Zusammensinken.","domain":"person","taxonomy":["pose","posture"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"single","group":"person.pose.posture.style"},"tags":["pose","posture","slouch","subtle","realism"],"requires":[],"conflicts":[],"implies":[],"notes":"Subtle alternative to slouched posture."},
+    {"id":"person.pose.posture.unposed_candid","prompt":"unposed, candid posture","label_en":"Unposed / candid","label_de":"Ungestellt / spontan","description_en":"Encourages an unstaged photographic posture.","description_de":"Fördert eine ungestellte, fotografisch spontane Haltung.","domain":"person","taxonomy":["pose","posture"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["pose","posture","candid","realism"],"requires":[],"conflicts":[],"implies":[],"notes":"Migrated from legacy posture_unposed."}
+  ]
+}
