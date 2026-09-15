@@ -76,8 +76,8 @@ test('image realism does not duplicate shot-style or lighting roots', async () =
   const doc = await readJson('data/image/realism.json');
   for (const trait of doc.traits) {
     assert.equal(trait.taxonomy[0], 'realism');
-    assert.equal(trait.prompt, 'natural available light', false);
-    assert.equal(trait.prompt, 'documentary photography', false);
-    assert.equal(trait.prompt, 'candid portrait photography', false);
+    assert.notEqual(trait.prompt, 'natural available light');
+    assert.notEqual(trait.prompt, 'documentary photography');
+    assert.notEqual(trait.prompt, 'candid portrait photography');
   }
 });
