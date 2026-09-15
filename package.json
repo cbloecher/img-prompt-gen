@@ -2,6 +2,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --check js/app.js && node --check js/data.js && node --check js/generator.js && node --check js/profiles.js && node --test"
   }
 }
