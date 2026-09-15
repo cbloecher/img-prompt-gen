@@ -1,23 +1,23 @@
 # Person taxonomy review
 
-## Ziel
+## Status
 
-Die Person-Taxonomie wird von abstrakt nach spezifisch neu aufgebaut. Bestehende Merkmale werden semantisch übernommen, aber es gibt keine Pflicht zur Kompatibilität mit alten IDs, Kategorien, Unterkategorien oder Dateigrenzen.
-
-Das v2-Datenmodell verwendet ausschließlich:
+Issue #17 ist umgesetzt. Die Person-Taxonomie verwendet jetzt Schema v2:
 
 ```text
 domain -> taxonomy[] -> trait
 ```
 
-`category` und `subcategory` entfallen vollständig.
+`category` und `subcategory` sind aus den v2-Personendaten entfernt. Dateien sind ausschließlich Speicher-/Pflegeeinheiten; die fachliche Einordnung ergibt sich aus `domain` und `taxonomy[]`.
 
-## Zielhierarchie
+Die frühere v1-Struktur wurde als fachliche Quelle verwendet, nicht als Kompatibilitätsvertrag. Trait-IDs und Selection-Gruppen wurden daher konsistent neu aufgebaut. Sinnvolle vorhandene Merkmale wurden semantisch erhalten; die zusätzliche alte `posture.json` wurde in `pose` bzw. `pose-naturalism.json` überführt.
+
+## Ziel- und Isthierarchie
 
 ```text
 person
   identity
-    sex_gender
+    sex_gender          # primäres UI-Personenattribut, kein zusätzlicher Trait
     age
     ancestry_ethnicity
   body
@@ -85,146 +85,86 @@ person
     body_adornment
 ```
 
-## Grundregeln
+`sex_gender` und das exakte Alter bleiben bewusste primäre Personenattribute der UI, weil sie gleichzeitig die Anwendbarkeit anderer Traits steuern. Altersstufen wie `middle-aged` und `mature` können zusätzlich als Traits gesetzt werden. Die strukturelle Einordnung dieser Attribute bleibt `person -> identity`.
 
-### Identity
+## Zentrale Abgrenzungsregeln
 
-`identity` enthält globale Personenmerkmale. `ancestry_ethnicity` wird unabhängig von Hautfarbe, Haarstruktur und Gesichtsform modelliert. Es gibt keine automatische Ableitung dieser Merkmale aus Abstammung/Ethnie.
+- **Identity / ancestry_ethnicity** beschreibt globale Abstammung/Ethnie. Daraus werden keine Haut-, Haar- oder Gesichtsmerkmale automatisch abgeleitet.
+- **Skin / tone** ist eine unabhängige Dimension mit eigener exklusiver Selection-Gruppe.
+- **Body** beschreibt stabile Körperform, Proportionen, Gewebeverteilung und nicht-explizite sekundäre Geschlechtsmerkmale.
+- **Face** beschreibt stabile Gesichtsgeometrie und Anatomie; Mimik liegt unter **Expression**.
+- **Skin** beschreibt Oberfläche, Textur, Pigmentierung, Hautalterung und lokale Hautdetails.
+- **Hair** enthält Länge, Struktur, Frisur und Haaransatz; Grundfarbe und Farbeffekte liegen unter **Hair color & effects**.
+- **Expression** beschreibt momentane Mimik und deren sichtbare Wirkung.
+- **Head & gaze** enthält Blick, Augenzustand, Kopforientierung und Kinnposition.
+- **Pose** ist Oberbegriff für Grundposition, Körperhaltung, Oberkörper, Balance sowie Arm-, Hand- und Beinpositionen.
+- **Wearables** enthält am Körper getragene Accessoires. Handgehaltene/genutzte Objekte gehören in `scene -> objects`, die Beziehung dazu in `scene -> interaction`.
+- **Realism** bleibt Bild-/Darstellungsdimension. Anatomische Detail-Traits wurden in die Person-Taxonomie verschoben.
 
-### Age
+## Wichtige Migrationen
 
-`identity -> age` enthält nur abstrakte Altersbeschreibung, z. B. adult, middle-aged, mature. Sichtbare Altersmerkmale werden an ihrer anatomischen Stelle modelliert:
+| v1-Bedeutung | v2-Heimat |
+| --- | --- |
+| abstrakte Altersstufen | `person -> identity -> age` |
+| mature skin, neck wrinkles, aged hands | `person -> skin -> aging` |
+| softened jawline | `person -> face -> jaw_chin` |
+| broad pelvis | `person -> body -> proportions -> pelvis` |
+| broad rounded hips | `person -> body -> proportions -> hips` |
+| breast size/asymmetry/aging | `person -> body -> secondary_sex_characteristics -> breast` |
+| crooked smile | `person -> expression -> smile` |
+| facial asymmetry | `person -> face -> shape` |
+| detailed skin texture | `person -> skin -> texture` |
+| natural teeth | `person -> face -> teeth` |
+| natural hair colors | `person -> hair_color_effects -> base_color` |
+| gray strands / graying temples | `person -> hair_color_effects -> aging` |
+| gaze + head pose | `person -> head_gaze` |
+| old posture traits | `person -> pose`; supplementary naturalism traits in `pose-naturalism.json` |
 
-- Hautalterung -> `skin -> aging`
-- weicher werdende Kieferlinie -> `face -> jaw_chin`
-- ergrauendes Haar -> `hair_color_effects -> aging`
-- altersbezogene Körpermerkmale -> passender Pfad unter `body`
+## Neue Lücken, die im v2-Aufbau geschlossen wurden
 
-### Body
+### Ancestry / ethnicity
 
-`body` beschreibt stabile körperliche Form und Proportionen. Gesamtstatur, Proportionen, Gewebeverteilung, sekundäre Geschlechtsmerkmale und weitere anatomische Details werden getrennt geführt.
+`identity.json` enthält eine erste breite, bewusst nicht deterministische Herkunfts-/Abstammungsstruktur. Die Traits sind mehrfach kombinierbar, damit gemischte Herkunft beschrieben werden kann. Alle `implies` bleiben leer; es gibt insbesondere keine automatische Kopplung an Hautton, Haarstruktur oder Gesichtsanatomie.
 
-Beispielhafte Pfade:
+### Skin tone
 
-```text
-person -> body -> build -> slender
-person -> body -> proportions -> shoulders -> broad
-person -> body -> tissue_distribution -> abdomen -> soft_lower
-person -> body -> secondary_sex_characteristics -> breast -> medium
-```
-
-`broad pelvis` und `broad rounded hips` bleiben fachlich unterscheidbar: Skelett-/Beckenproportion gegenüber äußerer Silhouette/Weichteilverteilung.
-
-### Face
-
-`face` enthält stabile Anatomie und Geometrie. Momentane Mimik gehört nach `expression`.
-
-Daher wird z. B. ein schiefes Lächeln künftig unter `expression -> smile` geführt, während eine schiefe Nase unter `face -> nose` bleibt.
-
-### Skin
-
-`skin` beschreibt Oberfläche und Gewebeerscheinung, unabhängig davon, ob das Merkmal am Gesicht oder Körper auftritt. Hautton wird explizit und unabhängig von `ancestry_ethnicity` modelliert.
-
-### Hair
-
-`hair` enthält Länge, Struktur, Frisur, Haaransatz/Pony und Gesichtsbehaarung. Haarfarbe und Farbeffekte liegen separat unter `hair_color_effects`.
-
-### Expression
-
-`expression` beschreibt momentane sichtbare Gesichtskonfiguration oder deren wahrgenommene Wirkung. Die Unterteilung bleibt bewusst zweistufig:
-
-```text
-base
-smile
-emotion
-quality
-state
-```
-
-### Head & gaze
-
-Der bisherige Mischbereich `gaze` wird fachlich zu `head_gaze` konsolidiert:
-
-```text
-gaze_direction
-gaze_quality
-eye_state
-head_orientation
-chin_position
-```
-
-### Pose
-
-`pose` ist der Oberbegriff für die räumliche Körperkonfiguration. `posture` ist darunter eingeordnet und keine parallele Hauptkategorie.
+`skin.json` enthält eine eigenständige Auswahl von Hauttonstufen unter `person -> skin -> tone`. Diese Selection-Gruppe ist unabhängig von Abstammung/Ethnie.
 
 ### Wearables
 
-Am Körper getragene Accessoires gehören personennah zu `wearables`:
+`wearables.json` enthält eine erste Struktur für Brillen, Schmuck, Kopf-Accessoires, getragene Taschen und sichtbaren Körperschmuck. Damit ist die Grenze klar:
 
 ```text
-eyewear
-jewelry
-head_accessories
-carry_wearables
-body_adornment
+am Körper getragen -> person / wearables
+Objekt vorhanden   -> scene / objects
+Person nutzt Objekt -> scene / interaction
 ```
 
-Beispiele: Brillen, Sonnenbrillen, Ohrringe, Ketten, Ringe, Armbänder, Uhren, Kopfbedeckungen, Taschen/Rucksäcke und sichtbarer Körperschmuck.
+## Bewusst erhaltene semantische Unterschiede
 
-Handgehaltene oder genutzte Objekte gehören dagegen in `scene -> objects`; die Beziehung der Person zum Objekt gehört separat in `scene -> interaction`.
+- `broad pelvis` vs. `broad rounded hips`: Skelett-/Beckenproportion vs. äußere Silhouette/Weichteile.
+- Face marks vs. Skin marks: exakt lokalisiertes Gesichtsmerkmal vs. allgemeines Hautmerkmal.
+- Hair base color vs. Hair aging: Grundfarbe vs. zusätzliches Ergrauen/Alterungsmuster.
+- Expression quality vs. Image mood: sichtbarer Gesichtsausdruck vs. globale Bildstimmung.
+- Face eyes vs. Head & gaze eye state: anatomische Augenform vs. momentaner Zustand/Blick.
+- Anatomische Schulterbreite vs. haltungsbedingte ungleiche Schulterhöhe.
 
-## Beispielhafte v2-IDs
+## Technische Umsetzung
 
-```text
-person.body.build.slender
-person.body.proportions.shoulders.broad
-person.face.nose.aquiline
-person.skin.tone.medium
-person.skin.pigmentation.freckles
-person.hair.length.shoulder
-person.hair_color_effects.base_color.dark_brown
-person.expression.smile.subtle
-person.head_gaze.gaze_direction.camera
-person.pose.base_position.standing
-person.wearables.jewelry.earrings
-```
+Die Anwendung arbeitet intern bereits auf `domain + taxonomy[]`. Noch nicht migrierte Szene-/Bild-Dateien werden beim Laden vorübergehend auf diese Struktur normalisiert; die Person-Daten liegen nativ in Schema v2 vor.
 
-IDs dürfen beim Umbau geändert werden. Es gibt keine Legacy-Kompatibilitätsanforderung.
+Navigation, Suche und Prompt-Reihenfolge verwenden Taxonomiepfade statt `category`/`subcategory`. Profile verwenden die Domain direkt für ihre Bereiche. Der alte lokale State und alte Profile werden bewusst nicht migriert.
 
-## Mapping der bisherigen Struktur
+Die Tests prüfen unter anderem:
 
-Die folgenden bisherigen Bereiche werden fachlich neu einsortiert:
+- Schema v2 für alle Person-Dateien,
+- Fehlen von `category`/`subcategory`,
+- Eindeutigkeit der neuen IDs,
+- Domain-basierte Profilbereiche,
+- hierarchische exklusive Selection-Gruppen,
+- Unabhängigkeit von Ancestry/Ethnicity und körperlichen Merkmalen,
+- eigenständige Skin-Tone-Gruppe.
 
-- `age_mature_skin` -> `person -> skin -> aging`
-- `age_softened_jawline` -> `person -> face -> jaw_chin`
-- `age_neck_wrinkles` -> `person -> skin -> aging`
-- `age_wrinkled_hands` -> `person -> skin -> aging`
-- `face_smile_crooked` -> `person -> expression -> smile`
-- bisherige Haarfarben in `hair` -> `person -> hair_color_effects -> base_color`
-- `hair_gray_strands`, `hair_graying_temples` -> `person -> hair_color_effects -> aging`
-- `gaze`-Unterbereiche -> `person -> head_gaze -> ...`
-- Pose-Unterbereiche -> `person -> pose -> base_position|posture|torso|weight_balance|arms|hands|legs`
-- anatomische Detail-Traits aus `realism` -> fachlich passende Person-Taxonomie
+## Nächste Taxonomie-Arbeit
 
-Kein Merkmal wird allein wegen der Reorganisation verworfen. Dubletten oder semantisch nahezu identische Merkmale werden erst nach expliziter Prüfung zusammengeführt.
-
-## Offene Ergänzungen
-
-Beim Neuaufbau sollen insbesondere folgende Lücken geschlossen werden:
-
-- `identity -> ancestry_ethnicity`
-- `skin -> tone`
-- `wearables` mit den oben definierten Unterpfaden
-- weitere offensichtliche Lücken erst nach konsistenter Basismigration ergänzen
-
-## Beziehung zu Szene
-
-Die Schnittstelle zu Szene lautet:
-
-```text
-person -> wearables        = an der Person getragen
-scene -> objects           = Objekt ist vorhanden
-scene -> interaction       = Person tut etwas mit dem Objekt
-```
-
-Damit bleiben Erscheinung, Gegenstand und Handlung getrennt kombinierbar.
+Die gleiche v2-Systematik soll für **Scene** (#6) und **Image** (#7) verwendet werden. Das systematische ImageLexicon-Review (#15) wird gegen diese neue Struktur gespiegelt, nicht gegen die frühere v1-Taxonomie.
