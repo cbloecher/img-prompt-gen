@@ -2,7 +2,7 @@
 
 ## Version 2 decision
 
-The canonical data model is now based on exactly three structural concepts:
+The canonical trait data model is based on exactly three structural concepts:
 
 ```text
 domain -> taxonomy[] -> trait
@@ -11,6 +11,8 @@ domain -> taxonomy[] -> trait
 `category` and `subcategory` are removed from v2. The taxonomy is the single source of truth for hierarchical placement. Files are only storage/maintenance units and are not a semantic level of the taxonomy.
 
 The migration to v2 does **not** preserve legacy trait IDs or legacy file boundaries. Existing traits should be retained semantically, but their IDs, taxonomy paths, selection groups and file placement may be rebuilt consistently.
+
+Primary person attributes such as exact age and sex/gender remain direct UI/state attributes because they also control trait applicability. Semantically they belong under `person -> identity`, but they do not need duplicate selectable traits. Descriptive age-stage traits can still exist under `person -> identity -> age`.
 
 ## Domains
 
@@ -189,8 +191,8 @@ The person domain is structured from abstract to specific:
 ```text
 person
   identity
-    sex_gender
-    age
+    sex_gender          # primary UI/state attribute
+    age                 # exact age is UI/state; age-stage descriptors may be traits
     ancestry_ethnicity
   body
   face
@@ -212,7 +214,7 @@ Key boundaries:
 - `wearables` contains items worn on the person such as eyewear, jewelry, watches, head accessories, carried wearables and body jewelry.
 - Handheld or used objects belong in `scene/objects`; the relation to the person belongs in `scene/interaction`.
 
-See `docs/person-taxonomy-review.md` and issue #17 for the migration plan.
+See `docs/person-taxonomy-review.md` and issue #17 for the migration record.
 
 ## Scene object / interaction boundary
 
@@ -263,7 +265,7 @@ Age is kept separate from `applies_to`. Example:
 
 The range is UI guidance/filtering, not a biological rule.
 
-The abstract age description belongs under `person -> identity -> age`. Concrete visible aging traits belong at their anatomical location, for example skin aging under `person -> skin -> aging`.
+The exact age is a primary person attribute. Descriptive age stages belong under `person -> identity -> age`. Concrete visible aging traits belong at their anatomical location, for example skin aging under `person -> skin -> aging`.
 
 ## Model independence
 
@@ -281,7 +283,7 @@ Negative concepts remain in `data/negative.json`; safety configuration remains i
 
 ## Suggested storage layout
 
-The storage layout should mirror the domains for maintainability, while remaining secondary to the JSON taxonomy:
+The storage layout should mirror the domains for maintainability, while remaining secondary to the JSON taxonomy. Multiple files may intentionally represent the same taxonomy root, for example `pose.json` and `pose-naturalism.json` both represent `person -> pose`.
 
 ```text
 data/
@@ -295,6 +297,7 @@ data/
     expression.json
     head-gaze.json
     pose.json
+    pose-naturalism.json
     wearables.json
   scene/
     clothing.json
