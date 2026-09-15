@@ -8,6 +8,7 @@ export const TRAIT_FILES = [
   { path:'person/expression.json', domain:'person' },
   { path:'person/head-gaze.json', domain:'person' },
   { path:'person/pose.json', domain:'person' },
+  { path:'person/pose-naturalism.json', domain:'person' },
   { path:'person/wearables.json', domain:'person' },
 
   // Scene/image are still stored as v1 files for now. They are normalized to
