@@ -1,5 +1,4 @@
-export const PROFILE_KEY_V1 = 'img-prompt-gen-profiles-v1';
-export const PROFILE_KEY_V2 = 'img-prompt-gen-profiles-v2';
+export const PROFILE_KEY_V3 = 'img-prompt-gen-profiles-v3';
 
 export const PROFILE_SCOPES = [
   { id: 'all', label: 'Gesamt' },
@@ -11,26 +10,13 @@ export const PROFILE_SCOPES = [
 
 export function readProfiles(storage = localStorage) {
   try {
-    const current = JSON.parse(storage.getItem(PROFILE_KEY_V2) || 'null');
-    if (Array.isArray(current)) return current;
-  } catch (_) {}
-
-  let legacy = {};
-  try { legacy = JSON.parse(storage.getItem(PROFILE_KEY_V1) || '{}') || {}; } catch (_) {}
-  const migrated = Object.entries(legacy).map(([name, profile]) => ({
-    name,
-    scope: 'all',
-    selected: Array.isArray(profile?.selected) ? profile.selected : [],
-    sex: profile?.sex || 'all',
-    age: Number(profile?.age) || 35,
-    freeText: profile?.freeText || ''
-  }));
-  if (migrated.length) writeProfiles(migrated, storage);
-  return migrated;
+    const current = JSON.parse(storage.getItem(PROFILE_KEY_V3) || '[]');
+    return Array.isArray(current) ? current : [];
+  } catch (_) { return []; }
 }
 
 export function writeProfiles(profiles, storage = localStorage) {
-  storage.setItem(PROFILE_KEY_V2, JSON.stringify(profiles));
+  storage.setItem(PROFILE_KEY_V3, JSON.stringify(profiles));
 }
 
 export function upsertProfile(profiles, profile) {
@@ -47,17 +33,14 @@ export function findProfile(profiles, scope, name) {
   return profiles.find(p => p.scope === scope && p.name === name) || null;
 }
 
-export function categoryToScope(category, navGroups) {
-  for (const group of navGroups) if (group.categories.includes(category)) return group.id;
-  return 'other';
-}
-
-export function buildTraitScopeIndex(docs, navGroups) {
+export function buildTraitScopeIndex(docs) {
   const map = new Map();
   for (const doc of docs) {
-    const category = doc.meta?.category || 'other';
-    const scope = categoryToScope(category, navGroups);
-    for (const trait of doc.traits || []) map.set(trait.id, scope);
+    const fallbackDomain = doc.meta?.domain || 'other';
+    for (const trait of doc.traits || []) {
+      const domain = trait.domain || fallbackDomain;
+      map.set(trait.id, ['person','scene','image'].includes(domain) ? domain : 'other');
+    }
   }
   return map;
 }
