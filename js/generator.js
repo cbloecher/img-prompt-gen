@@ -17,8 +17,8 @@ export const ROOT_ORDER = {
   'scene.environment': 130,
   'scene.weather_time': 135,
   'scene.background': 145,
-  'scene.interaction': 150,
-  'scene.objects': 155,
+  'scene.objects': 150,
+  'scene.interaction': 155,
   'scene.situation': 160,
 
   'image.camera': 165,
@@ -26,9 +26,9 @@ export const ROOT_ORDER = {
   'image.framing': 169,
   'image.composition': 170,
   'image.lighting': 175,
-  'image.mood': 180,
   'image.focus_depth_of_field': 185,
   'image.shot_style': 190,
+  'image.mood': 195,
   'image.style_medium': 200,
   'image.realism': 210
 };
