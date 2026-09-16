@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "description": "Durable reviewed vocabulary decisions. These describe meaning/relevance, not application policy.",
+  "decisions": [
+    {"term":"bikini","classification":"contextual_safe","category":"revealing_clothing","curated":true},
+    {"term":"swimsuit","classification":"contextual_safe","category":"revealing_clothing","curated":true},
+    {"term":"underwear","classification":"contextual_safe","category":"revealing_clothing","curated":true},
+    {"term":"lingerie","classification":"contextual_safe","category":"revealing_clothing","curated":true},
+    {"term":"kiss","classification":"contextual_safe","category":"affection_or_contact","curated":true},
+    {"term":"hug","classification":"contextual_safe","category":"affection_or_contact","curated":true},
+    {"term":"nudity","classification":"contextual_review","category":"nudity_or_exposure","curated":true},
+    {"term":"nude","classification":"contextual_review","category":"nudity_or_exposure","curated":true},
+    {"term":"genitals","classification":"explicit_unsafe","category":"explicit_anatomy","curated":true},
+    {"term":"sexual intercourse","classification":"explicit_unsafe","category":"sexual_act","curated":true},
+    {"term":"masturbation","classification":"explicit_unsafe","category":"sexual_act","curated":true},
+    {"term":"sexual position","classification":"explicit_unsafe","category":"sexual_position","curated":true},
+    {"term":"orgasm","classification":"explicit_unsafe","category":"sexual_fluids_or_climax","curated":true},
+    {"term":"pornographic framing","classification":"explicit_unsafe","category":"pornographic_framing","curated":true},
+    {"term":"blue eyes","classification":"irrelevant","category":null,"curated":true}
+  ]
+}
