@@ -7,8 +7,10 @@ export const TRAIT_FILES = [
   'person/skin.json',
   'person/skin-marks.json',
   'person/hair.json',
+  'person/hair-expanded.json',
   'person/hair-color-effects.json',
   'person/expression.json',
+  'person/expression-expanded.json',
   'person/expression-facial-configuration.json',
   'person/head-gaze.json',
   'person/pose.json',
@@ -19,6 +21,7 @@ export const TRAIT_FILES = [
   'scene/clothing-expanded.json',
   'scene/location.json',
   'scene/location-expanded.json',
+  'scene/location-realworld.json',
   'scene/environment.json',
   'scene/environment-atmosphere.json',
   'scene/weather-time.json',
@@ -31,6 +34,7 @@ export const TRAIT_FILES = [
   'image/camera.json',
   'image/perspective.json',
   'image/framing.json',
+  'image/perspective-framing-expanded.json',
   'image/composition.json',
   'image/lighting.json',
   'image/focus-depth-of-field.json',
@@ -39,6 +43,7 @@ export const TRAIT_FILES = [
   'image/style-medium.json',
   'image/style-medium-color-rendering.json',
   'image/effects.json',
+  'image/techniques-materials.json',
   'image/realism.json'
 ];
 
@@ -51,8 +56,6 @@ function mergeSearchAliases(docs, aliasConfig) {
     if (!trait) throw new Error(`Alias verweist auf unbekanntes Trait: ${entry.trait_id}`);
     const aliases = [...new Set([...(trait.aliases || []), ...(entry.aliases || [])])];
     trait.aliases = aliases;
-    // The current search already indexes tags. Mirror aliases there until aliases
-    // are consumed directly by every search/import component.
     trait.tags = [...new Set([...(trait.tags || []), ...aliases])];
   }
 }
