@@ -4,18 +4,20 @@ import { readFile } from 'node:fs/promises';
 
 const DOMAIN_FILES = {
   person: [
-    'identity.json', 'body.json', 'face.json', 'skin.json', 'hair.json',
-    'hair-color-effects.json', 'expression.json', 'head-gaze.json', 'pose.json',
+    'identity.json', 'body.json', 'body-height.json', 'face.json', 'face-eye-color.json',
+    'skin.json', 'skin-marks.json', 'hair.json', 'hair-color-effects.json',
+    'expression.json', 'expression-facial-configuration.json', 'head-gaze.json', 'pose.json',
     'pose-naturalism.json', 'wearables.json'
   ],
   scene: [
-    'clothing.json', 'location.json', 'environment.json', 'weather-time.json',
-    'background.json', 'objects.json', 'interaction.json', 'situation.json'
+    'clothing.json', 'clothing-expanded.json', 'location.json', 'location-expanded.json',
+    'environment.json', 'environment-atmosphere.json', 'weather-time.json',
+    'background.json', 'objects.json', 'interaction.json', 'person-to-person.json', 'situation.json'
   ],
   image: [
     'camera.json', 'perspective.json', 'framing.json', 'composition.json',
     'lighting.json', 'focus-depth-of-field.json', 'shot-style.json', 'mood.json',
-    'style-medium.json', 'realism.json'
+    'style-medium.json', 'style-medium-color-rendering.json', 'effects.json', 'realism.json'
   ]
 };
 
@@ -66,10 +68,46 @@ test('skin tone is independent and mutually exclusive', async () => {
   for (const trait of tones) assert.equal(trait.selection.mode, 'single');
 });
 
+test('natural eye colors are modeled without fantasy colors', async () => {
+  const doc = await readJson('data/person/face-eye-color.json');
+  const ids = doc.traits.map(t => t.id);
+  assert.ok(ids.includes('person.face.eyes.color.blue'));
+  assert.ok(ids.includes('person.face.eyes.color.brown'));
+  assert.ok(ids.includes('person.face.eyes.color.heterochromia'));
+  assert.equal(ids.some(id => /\.(red|purple|pink|yellow)$/.test(id)), false);
+  for (const trait of doc.traits) assert.equal(trait.selection.group, 'person.face.eyes.color');
+});
+
 test('scene objects do not imply interaction semantics', async () => {
   const doc = await readJson('data/scene/objects.json');
   assert.ok(doc.traits.length > 0);
   for (const trait of doc.traits) assert.deepEqual(trait.implies, [], trait.id);
+});
+
+test('person-to-person interactions remain a scene interaction branch', async () => {
+  const doc = await readJson('data/scene/person-to-person.json');
+  assert.ok(doc.traits.length >= 4);
+  for (const trait of doc.traits) {
+    assert.deepEqual(trait.taxonomy.slice(0, 2), ['interaction', 'person_to_person']);
+    assert.equal(trait.age_range.min, 18);
+  }
+});
+
+test('expanded clothing covers underwear and protective workwear', async () => {
+  const doc = await readJson('data/scene/clothing-expanded.json');
+  const ids = new Set(doc.traits.map(t => t.id));
+  assert.ok(ids.has('scene.clothing.garments.underwear.briefs'));
+  assert.ok(ids.has('scene.clothing.garments.work.coveralls'));
+  assert.ok(ids.has('scene.clothing.garments.work.protective_suit'));
+  assert.ok(ids.has('scene.clothing.garments.footwear.safety_shoes'));
+});
+
+test('image effects are a dedicated root separate from style/medium', async () => {
+  const doc = await readJson('data/image/effects.json');
+  assert.deepEqual(doc.meta.taxonomy, ['effects']);
+  assert.ok(doc.traits.some(t => t.id === 'image.effects.texture.film_grain'));
+  assert.ok(doc.traits.some(t => t.id === 'image.effects.motion.motion_blur'));
+  for (const trait of doc.traits) assert.equal(trait.taxonomy[0], 'effects');
 });
 
 test('image realism does not duplicate shot-style or lighting roots', async () => {
