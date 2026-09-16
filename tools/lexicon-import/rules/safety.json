@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "classifications": {
+    "irrelevant": {"description": "Not useful for the sexual-safety lexicon."},
+    "contextual_safe": {"description": "Safety-adjacent but non-explicit by itself."},
+    "contextual_review": {"description": "Meaning or safety depends materially on context."},
+    "explicit_unsafe": {"description": "Meaning is explicitly sexual; policy is applied separately."}
+  },
+  "categories": [
+    "explicit_anatomy",
+    "nudity_or_exposure",
+    "sexual_act",
+    "sexual_position",
+    "sexual_fluids_or_climax",
+    "fetish_or_bondage",
+    "pornographic_framing",
+    "revealing_clothing",
+    "affection_or_contact"
+  ],
+  "principles": [
+    "Classify vocabulary meaning, not runtime action.",
+    "Do not infer safety from source category or post count.",
+    "Keep minors and age safety separate.",
+    "Prefer contextual_review over explicit_unsafe when a standalone term has common non-explicit meanings.",
+    "Artist, copyright, character and unrelated meta vocabulary is irrelevant to this lexicon."
+  ]
+}
