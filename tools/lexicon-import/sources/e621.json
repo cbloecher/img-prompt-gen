@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "tagcomplete-e621",
+  "repository": "dreamscapeai/tagcomplete",
+  "path": "tags/e621.csv",
+  "revision": "main",
+  "blob_sha": "5c24232a08825c039965c883fe3acba8f64c4c12",
+  "format": "csv",
+  "role": "secondary_recall_source",
+  "notes": "Use as additional recall/provenance source. Keep its source identity because vocabulary distribution differs substantially from the human-photo project scope."
+}
