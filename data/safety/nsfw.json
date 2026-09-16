@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "purpose": "safety_detection_only",
+  "description": "Categorized explicit-sexual vocabulary retained only for later safety classification. This file is not a selectable prompt catalogue and must never be merged into trait search aliases.",
+  "default_action": "block",
+  "categories": [
+    {"id":"explicit_anatomy","label_en":"Explicit anatomy","label_de":"Explizite Anatomie","severity":"high","action":"block","terms":["genitals","genitalia","penis","vulva","vagina","testicles","anus"],"aliases_de":["Genitalien","Geschlechtsteile","Penis","Vulva","Vagina","Hoden","After"]},
+    {"id":"explicit_exposure","label_en":"Explicit exposure","label_de":"Explizite Entblößung","severity":"high","action":"block","terms":["exposed genitals","genital exposure","explicit nudity","spread genital exposure"],"aliases_de":["entblößte Genitalien","explizite Nacktheit","Genitalentblößung"]},
+    {"id":"sexual_act","label_en":"Sexual act","label_de":"Sexuelle Handlung","severity":"high","action":"block","terms":["sexual intercourse","oral sex","anal sex","masturbation","penetration","genital touching"],"aliases_de":["Geschlechtsverkehr","Oralsex","Analsex","Masturbation","Penetration","Berühren der Genitalien"]},
+    {"id":"sexual_position","label_en":"Sexual position","label_de":"Sexstellung","severity":"high","action":"block","terms":["sex position","sexual position","missionary position","doggy style","cowgirl position","sixty-nine position"],"aliases_de":["Sexstellung","Sexposition","Missionarsstellung","Hündchenstellung","Reiterstellung","69-Stellung"]},
+    {"id":"pornographic_framing","label_en":"Pornographic framing","label_de":"Pornografische Inszenierung","severity":"high","action":"block","terms":["pornographic framing","explicit sexual close-up","genital close-up","pornographic pose","explicit sexual focus"],"aliases_de":["pornografische Inszenierung","explizite sexuelle Nahaufnahme","Genital-Nahaufnahme","pornografische Pose"]},
+    {"id":"sexual_fluids_or_climax","label_en":"Sexual fluids or climax","label_de":"Sexuelle Flüssigkeiten oder Höhepunkt","severity":"high","action":"block","terms":["orgasm","ejaculation","semen","sexual fluids"],"aliases_de":["Orgasmus","Ejakulation","Sperma","sexuelle Flüssigkeiten"]}
+  ],
+  "non_explicit_exclusions": {
+    "description": "Terms that must not be treated as explicit merely by themselves; context may still require separate safety logic.",
+    "examples":["underwear","lingerie","bra","briefs","bikini","swimsuit","shirtless","bare shoulders","kiss","hug","holding hands"]
+  },
+  "notes":[
+    "Keep age/minor detection separate from this vocabulary.",
+    "Do not expose these categories as selectable traits or autocomplete suggestions.",
+    "Use normalized whole-term/phrase matching and context rules rather than unrestricted substring matching.",
+    "Future safety logic may add review-level ambiguous terms in a separate category instead of weakening explicit block categories."
+  ]
+}
