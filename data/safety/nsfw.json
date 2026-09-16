@@ -1,24 +1,94 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "purpose": "safety_detection_only",
-  "description": "Categorized explicit-sexual vocabulary retained only for later safety classification. This file is not a selectable prompt catalogue and must never be merged into trait search aliases.",
+  "description": "Curated safety lexicon derived from review of Danbooru/TagComplete-style tag vocabularies plus independent safety normalization. It is not a selectable prompt catalogue and must never be merged into trait search aliases.",
   "default_action": "block",
-  "categories": [
-    {"id":"explicit_anatomy","label_en":"Explicit anatomy","label_de":"Explizite Anatomie","severity":"high","action":"block","terms":["genitals","genitalia","penis","vulva","vagina","testicles","anus"],"aliases_de":["Genitalien","Geschlechtsteile","Penis","Vulva","Vagina","Hoden","After"]},
-    {"id":"explicit_exposure","label_en":"Explicit exposure","label_de":"Explizite Entblößung","severity":"high","action":"block","terms":["exposed genitals","genital exposure","explicit nudity","spread genital exposure"],"aliases_de":["entblößte Genitalien","explizite Nacktheit","Genitalentblößung"]},
-    {"id":"sexual_act","label_en":"Sexual act","label_de":"Sexuelle Handlung","severity":"high","action":"block","terms":["sexual intercourse","oral sex","anal sex","masturbation","penetration","genital touching"],"aliases_de":["Geschlechtsverkehr","Oralsex","Analsex","Masturbation","Penetration","Berühren der Genitalien"]},
-    {"id":"sexual_position","label_en":"Sexual position","label_de":"Sexstellung","severity":"high","action":"block","terms":["sex position","sexual position","missionary position","doggy style","cowgirl position","sixty-nine position"],"aliases_de":["Sexstellung","Sexposition","Missionarsstellung","Hündchenstellung","Reiterstellung","69-Stellung"]},
-    {"id":"pornographic_framing","label_en":"Pornographic framing","label_de":"Pornografische Inszenierung","severity":"high","action":"block","terms":["pornographic framing","explicit sexual close-up","genital close-up","pornographic pose","explicit sexual focus"],"aliases_de":["pornografische Inszenierung","explizite sexuelle Nahaufnahme","Genital-Nahaufnahme","pornografische Pose"]},
-    {"id":"sexual_fluids_or_climax","label_en":"Sexual fluids or climax","label_de":"Sexuelle Flüssigkeiten oder Höhepunkt","severity":"high","action":"block","terms":["orgasm","ejaculation","semen","sexual fluids"],"aliases_de":["Orgasmus","Ejakulation","Sperma","sexuelle Flüssigkeiten"]}
+  "matching": {"normalize_case":true,"underscore_as_space":true,"hyphen_as_space":true,"whole_term_or_phrase":true,"substring_matching":false},
+  "sources": [
+    {"id":"tagcomplete_danbooru","name":"TagComplete Danbooru top tags","upstream":"dreamscapeai/tagcomplete tags/danbooru.csv","format":"tag,type,postCount,aliases","role":"primary vocabulary/alias review"},
+    {"id":"tagcomplete_e621","name":"TagComplete e621 top tags","upstream":"dreamscapeai/tagcomplete tags/e621.csv","format":"tag,type,postCount,aliases","role":"secondary recall source; furry/species concepts are not imported unless useful for generic safety detection"},
+    {"id":"betadoggo_danbooru","name":"BetaDoggo Danbooru tag list","upstream":"BetaDoggo/danbooru-tag-list","format":"tag,category,post count,aliases","role":"freshness and alias cross-check"},
+    {"id":"curated","name":"Project safety curation","role":"normalization, German aliases, category/action assignment"}
   ],
-  "non_explicit_exclusions": {
-    "description": "Terms that must not be treated as explicit merely by themselves; context may still require separate safety logic.",
-    "examples":["underwear","lingerie","bra","briefs","bikini","swimsuit","shirtless","bare shoulders","kiss","hug","holding hands"]
-  },
-  "notes":[
+  "entries": [
+    {"id":"nsfw.anatomy.genitals","canonical":"genitals","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["genitalia","private parts","Geschlechtsteile","Genitalien"],"source_tags":["genitals"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.penis","canonical":"penis","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["phallus","male genitalia","Penis","männliche Genitalien"],"source_tags":["penis"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.vulva","canonical":"vulva","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["female genitalia","Vulva","weibliche Genitalien"],"source_tags":["vulva"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.vagina","canonical":"vagina","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["vaginal opening","Vagina","Scheide"],"source_tags":["vagina"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.testicles","canonical":"testicles","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["testes","scrotum","balls","Hoden","Hodensack"],"source_tags":["testicles","scrotum"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.anus","canonical":"anus","category":"explicit_anatomy","severity":"explicit","action":"block","aliases":["anal opening","After","Anus"],"source_tags":["anus"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.anatomy.pubic_hair","canonical":"pubic hair","category":"explicit_anatomy","severity":"contextual","action":"review","aliases":["pubic_hair","Schamhaar","Schambehaarung"],"source_tags":["pubic_hair"],"sources":["tagcomplete_danbooru","curated"]},
+
+    {"id":"nsfw.exposure.explicit_nudity","canonical":"explicit nudity","category":"explicit_exposure","severity":"explicit","action":"block","aliases":["fully nude explicit","explicitly naked","explizite Nacktheit"],"source_tags":["nude"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.exposure.exposed_genitals","canonical":"exposed genitals","category":"explicit_exposure","severity":"explicit","action":"block","aliases":["genital exposure","visible genitals","entblößte Genitalien","sichtbare Genitalien"],"source_tags":["exposed_genitals"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.exposure.spread_genitals","canonical":"spread genital exposure","category":"explicit_exposure","severity":"explicit","action":"block","aliases":["spread genitals","spreading genitals","gespreizte Genitalien"],"source_tags":["spread_pussy","spread_anus"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.exposure.wardrobe_malfunction","canonical":"accidental intimate exposure","category":"explicit_exposure","severity":"contextual","action":"review","aliases":["wardrobe malfunction","intimate exposure","ungewollte intime Entblößung"],"source_tags":[],"sources":["curated"]},
+
+    {"id":"nsfw.act.intercourse","canonical":"sexual intercourse","category":"sexual_act","severity":"explicit","action":"block","aliases":["intercourse","sex act","Geschlechtsverkehr","Sexualverkehr"],"source_tags":["sex"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.act.vaginal","canonical":"vaginal intercourse","category":"sexual_act","severity":"explicit","action":"block","aliases":["vaginal sex","vaginal penetration","Vaginalverkehr"],"source_tags":["vaginal"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.anal","canonical":"anal sex","category":"sexual_act","severity":"explicit","action":"block","aliases":["anal intercourse","anal penetration","Analsex","Analverkehr"],"source_tags":["anal"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.act.oral","canonical":"oral sex","category":"sexual_act","severity":"explicit","action":"block","aliases":["oral intercourse","oral stimulation","Oralsex"],"source_tags":["fellatio","cunnilingus"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.act.fellatio","canonical":"fellatio","category":"sexual_act","severity":"explicit","action":"block","aliases":["blowjob","oral stimulation of penis","Fellatio"],"source_tags":["fellatio"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.cunnilingus","canonical":"cunnilingus","category":"sexual_act","severity":"explicit","action":"block","aliases":["oral stimulation of vulva","Cunnilingus"],"source_tags":["cunnilingus"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.masturbation","canonical":"masturbation","category":"sexual_act","severity":"explicit","action":"block","aliases":["self stimulation","self-stimulation","Masturbation","Selbstbefriedigung"],"source_tags":["masturbation"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.act.genital_touching","canonical":"genital touching","category":"sexual_act","severity":"explicit","action":"block","aliases":["touching genitals","fondling genitals","Genitalberührung"],"source_tags":["handjob","fingering"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.handjob","canonical":"manual stimulation of penis","category":"sexual_act","severity":"explicit","action":"block","aliases":["handjob","manual sex","manuelle sexuelle Stimulation"],"source_tags":["handjob"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.fingering","canonical":"digital genital stimulation","category":"sexual_act","severity":"explicit","action":"block","aliases":["fingering","digital penetration","Fingerstimulation"],"source_tags":["fingering"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.act.sex_toy_use","canonical":"sexual use of sex toy","category":"sexual_act","severity":"explicit","action":"block","aliases":["sex toy use","using a sex toy","Sexspielzeug verwenden"],"source_tags":["sex_toy"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+
+    {"id":"nsfw.position.generic","canonical":"sexual position","category":"sexual_position","severity":"explicit","action":"block","aliases":["sex position","Sexstellung","Sexposition"],"source_tags":[],"sources":["curated"]},
+    {"id":"nsfw.position.missionary","canonical":"missionary sexual position","category":"sexual_position","severity":"explicit","action":"block","aliases":["missionary position","Missionarsstellung"],"source_tags":["missionary"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.position.rear_entry","canonical":"rear-entry sexual position","category":"sexual_position","severity":"explicit","action":"block","aliases":["doggy style","rear entry sex","Hündchenstellung"],"source_tags":["doggystyle"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.position.riding","canonical":"riding sexual position","category":"sexual_position","severity":"explicit","action":"block","aliases":["cowgirl position","riding position","Reiterstellung"],"source_tags":["cowgirl_position"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.position.sixty_nine","canonical":"sixty-nine sexual position","category":"sexual_position","severity":"explicit","action":"block","aliases":["69 position","sixty nine position","69-Stellung"],"source_tags":["sixty_nine"],"sources":["tagcomplete_danbooru","curated"]},
+
+    {"id":"nsfw.fluids.semen","canonical":"semen","category":"sexual_fluids_or_climax","severity":"explicit","action":"block","aliases":["seminal fluid","Sperma","Samenflüssigkeit"],"source_tags":["semen"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.fluids.ejaculation","canonical":"ejaculation","category":"sexual_fluids_or_climax","severity":"explicit","action":"block","aliases":["ejaculate","Ejakulation","Samenerguss"],"source_tags":["ejaculation"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.climax.orgasm","canonical":"orgasm","category":"sexual_fluids_or_climax","severity":"explicit","action":"block","aliases":["sexual climax","Orgasmus","sexueller Höhepunkt"],"source_tags":["orgasm"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.fluids.sexual_fluids","canonical":"sexual fluids","category":"sexual_fluids_or_climax","severity":"explicit","action":"block","aliases":["sexual bodily fluids","sexuelle Flüssigkeiten"],"source_tags":[],"sources":["curated"]},
+
+    {"id":"nsfw.bondage.bondage","canonical":"sexual bondage","category":"fetish_bondage","severity":"explicit","action":"block","aliases":["bondage sex","erotic bondage","sexuelle Fesselung"],"source_tags":["bondage"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.bondage.bdsm","canonical":"explicit BDSM sexual activity","category":"fetish_bondage","severity":"explicit","action":"block","aliases":["BDSM sex","explicit BDSM","explizites BDSM"],"source_tags":["bdsm"],"sources":["tagcomplete_e621","curated"]},
+    {"id":"nsfw.fetish.fetish","canonical":"explicit sexual fetish activity","category":"fetish_bondage","severity":"explicit","action":"block","aliases":["sexual fetish scene","explizite Fetischszene"],"source_tags":["fetish"],"sources":["tagcomplete_e621","curated"]},
+
+    {"id":"nsfw.framing.pornographic","canonical":"pornographic framing","category":"pornographic_framing","severity":"explicit","action":"block","aliases":["pornographic composition","pornographic scene","pornografische Inszenierung"],"source_tags":["pornographic"],"sources":["curated"]},
+    {"id":"nsfw.framing.genital_closeup","canonical":"genital close-up","category":"pornographic_framing","severity":"explicit","action":"block","aliases":["genital closeup","close-up of genitals","Genital-Nahaufnahme"],"source_tags":["genital_focus"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.framing.sexual_focus","canonical":"explicit sexual focus","category":"pornographic_framing","severity":"explicit","action":"block","aliases":["sexual close-up","explicit sexual close-up","explizite sexuelle Nahaufnahme"],"source_tags":[],"sources":["curated"]},
+
+    {"id":"nsfw.context.nude","canonical":"nude","category":"contextual_nudity","severity":"contextual","action":"review","aliases":["naked","nudity","nackt","Nacktheit"],"source_tags":["nude","naked"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.context.topless","canonical":"topless","category":"contextual_nudity","severity":"contextual","action":"review","aliases":["bare chest","oben ohne"],"source_tags":["topless"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.bare_breasts","canonical":"bare breasts","category":"contextual_nudity","severity":"contextual","action":"review","aliases":["exposed breasts","visible breasts","entblößte Brust"],"source_tags":["breasts","nipples"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.nipples","canonical":"nipples","category":"contextual_anatomy","severity":"contextual","action":"review","aliases":["nipple","Brustwarzen","Brustwarze"],"source_tags":["nipples"],"sources":["tagcomplete_danbooru","tagcomplete_e621","curated"]},
+    {"id":"nsfw.context.cleavage","canonical":"cleavage","category":"sexualized_clothing_or_body","severity":"contextual","action":"review","aliases":["deep cleavage","Dekolleté","tiefer Ausschnitt"],"source_tags":["cleavage"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.lingerie","canonical":"lingerie","category":"sexualized_clothing_or_body","severity":"contextual","action":"allow","aliases":["intimate apparel","Dessous"],"source_tags":["lingerie"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.underwear","canonical":"underwear","category":"sexualized_clothing_or_body","severity":"contextual","action":"allow","aliases":["underclothes","Unterwäsche"],"source_tags":["underwear"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.bikini","canonical":"bikini","category":"sexualized_clothing_or_body","severity":"contextual","action":"allow","aliases":["two-piece swimsuit","Bikini"],"source_tags":["bikini"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.swimsuit","canonical":"swimsuit","category":"sexualized_clothing_or_body","severity":"contextual","action":"allow","aliases":["swimwear","Badeanzug","Badebekleidung"],"source_tags":["swimsuit"],"sources":["tagcomplete_danbooru","curated"]},
+    {"id":"nsfw.context.suggestive_pose","canonical":"sexually suggestive pose","category":"sexualized_pose","severity":"contextual","action":"review","aliases":["suggestive pose","provocative pose","sexuell suggestive Pose"],"source_tags":["suggestive_pose"],"sources":["curated"]},
+    {"id":"nsfw.context.seductive","canonical":"seductive expression","category":"sexualized_expression","severity":"contextual","action":"review","aliases":["seductive look","sexualized expression","verführerischer Blick"],"source_tags":["seductive"],"sources":["curated"]}
+  ],
+  "categories": [
+    {"id":"explicit_anatomy","severity":"explicit","default_action":"block"},
+    {"id":"explicit_exposure","severity":"explicit","default_action":"block"},
+    {"id":"sexual_act","severity":"explicit","default_action":"block"},
+    {"id":"sexual_position","severity":"explicit","default_action":"block"},
+    {"id":"sexual_fluids_or_climax","severity":"explicit","default_action":"block"},
+    {"id":"fetish_bondage","severity":"explicit","default_action":"block"},
+    {"id":"pornographic_framing","severity":"explicit","default_action":"block"},
+    {"id":"contextual_nudity","severity":"contextual","default_action":"review"},
+    {"id":"contextual_anatomy","severity":"contextual","default_action":"review"},
+    {"id":"sexualized_clothing_or_body","severity":"contextual","default_action":"allow_or_review"},
+    {"id":"sexualized_pose","severity":"contextual","default_action":"review"},
+    {"id":"sexualized_expression","severity":"contextual","default_action":"review"}
+  ],
+  "non_explicit_exclusions": {"description":"These terms are not explicit by themselves. They remain in the lexicon to prevent naive blocklisting and to support contextual rules.","examples":["underwear","lingerie","bra","briefs","bikini","swimsuit","shirtless","bare shoulders","kiss","hug","holding hands"]},
+  "notes": [
     "Keep age/minor detection separate from this vocabulary.",
-    "Do not expose these categories as selectable traits or autocomplete suggestions.",
-    "Use normalized whole-term/phrase matching and context rules rather than unrestricted substring matching.",
-    "Future safety logic may add review-level ambiguous terms in a separate category instead of weakening explicit block categories."
+    "Do not expose these entries as selectable traits or autocomplete suggestions.",
+    "External booru tag categories are not safety ratings; classification here is project curation.",
+    "Source tags preserve external vocabulary provenance; aliases normalize search/detection vocabulary.",
+    "Do not use unrestricted substring matching.",
+    "Contextual entries must not be promoted to block solely because the term occurs in isolation.",
+    "e621 is used only as a secondary recall source; species/furry-specific vocabulary is intentionally not copied wholesale into the human-photo core."
   ]
 }
