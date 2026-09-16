@@ -2,6 +2,8 @@
 
 Simple, model-agnostic image prompt generator based on structured prompt traits.
 
+https://cbloecher.github.io/img-prompt-gen/
+
 ## Goal
 
 The project builds image prompts from reusable characteristics instead of maintaining large fixed prompts. The first focus is realistic adult people: skin, face, hair, body proportions, age, expression, gaze, pose and photographic realism.
