@@ -1,23 +1,31 @@
 export const TRAIT_FILES = [
   'person/identity.json',
   'person/body.json',
+  'person/body-height.json',
   'person/face.json',
+  'person/face-eye-color.json',
   'person/skin.json',
+  'person/skin-marks.json',
   'person/hair.json',
   'person/hair-color-effects.json',
   'person/expression.json',
+  'person/expression-facial-configuration.json',
   'person/head-gaze.json',
   'person/pose.json',
   'person/pose-naturalism.json',
   'person/wearables.json',
 
   'scene/clothing.json',
+  'scene/clothing-expanded.json',
   'scene/location.json',
+  'scene/location-expanded.json',
   'scene/environment.json',
+  'scene/environment-atmosphere.json',
   'scene/weather-time.json',
   'scene/background.json',
   'scene/objects.json',
   'scene/interaction.json',
+  'scene/person-to-person.json',
   'scene/situation.json',
 
   'image/camera.json',
@@ -29,6 +37,8 @@ export const TRAIT_FILES = [
   'image/shot-style.json',
   'image/mood.json',
   'image/style-medium.json',
+  'image/style-medium-color-rendering.json',
+  'image/effects.json',
   'image/realism.json'
 ];
 
