@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "meta": {
+    "domain": "scene",
+    "taxonomy": ["environment"],
+    "title_en": "Environment",
+    "title_de": "Umgebung",
+    "description_en": "Additional environmental atmosphere traits identified during the ImageLexicon coverage review.",
+    "description_de": "Zusätzliche atmosphärische Umgebungsmerkmale aus dem ImageLexicon-Coverage-Review."
+  },
+  "traits": [
+    {"id":"scene.environment.atmosphere.steam","prompt":"visible steam in the environment","label_en":"Steam","label_de":"Dampf","description_en":"Visible steam or warm vapor in the local scene atmosphere.","description_de":"Sichtbarer Dampf oder warmer Wasserdampf in der lokalen Szenenatmosphäre.","domain":"scene","taxonomy":["environment","atmosphere"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["environment","atmosphere","steam","vapor"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"scene.environment.atmosphere.smoke","prompt":"light smoke in the environment","label_en":"Smoke","label_de":"Rauch","description_en":"Visible non-specific smoke in the local scene atmosphere.","description_de":"Sichtbarer, nicht näher spezifizierter Rauch in der lokalen Szenenatmosphäre.","domain":"scene","taxonomy":["environment","atmosphere"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["environment","atmosphere","smoke"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"scene.environment.atmosphere.dust","prompt":"visible dust in the air","label_en":"Airborne dust","label_de":"Staub in der Luft","description_en":"Fine airborne dust particles visible in the scene.","description_de":"Feine in der Luft schwebende Staubpartikel in der Szene.","domain":"scene","taxonomy":["environment","atmosphere"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["environment","atmosphere","dust","particles"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"scene.environment.atmosphere.mist","prompt":"light local mist","label_en":"Mist","label_de":"Leichter Dunst","description_en":"Localized light mist or haze in the scene, distinct from general weather fog.","description_de":"Lokaler leichter Dunst in der Szene, getrennt von allgemeinem Wetternebel.","domain":"scene","taxonomy":["environment","atmosphere"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["environment","atmosphere","mist","haze"],"requires":[],"conflicts":[],"implies":[],"notes":"Kept distinct from weather/time fog as a local atmospheric effect."},
+    {"id":"scene.environment.atmosphere.condensation","prompt":"visible condensation in the environment","label_en":"Condensation","label_de":"Kondensation","description_en":"Condensation or moisture is visibly present on nearby air or surfaces.","description_de":"Kondensation oder Feuchtigkeit ist sichtbar in der unmittelbaren Umgebung oder auf Oberflächen vorhanden.","domain":"scene","taxonomy":["environment","atmosphere"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["environment","atmosphere","condensation","moisture"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
