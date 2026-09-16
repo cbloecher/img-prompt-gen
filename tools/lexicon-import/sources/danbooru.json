@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "tagcomplete-danbooru",
+  "repository": "dreamscapeai/tagcomplete",
+  "path": "tags/danbooru.csv",
+  "revision": "main",
+  "blob_sha": "5ef4cd0f56f5b67ac35607baacc3103835ce8995",
+  "format": "csv",
+  "role": "coverage_source",
+  "notes": "Pin by blob SHA for reproducible imports; source categories are not safety categories."
+}
