@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "adenaufal/imagelexicon",
+    "commit": "d2770e90ae3cdd1e395c4f7142bc9ffc11a6edfd",
+    "path": "src/data/keywords",
+    "review_date": "2026-09-16"
+  },
+  "target": {
+    "repository": "cbloecher/img-prompt-gen",
+    "data_model": "domain -> taxonomy[] -> trait"
+  },
+  "method": {
+    "status": ["vorhanden", "ähnlich/alias", "fehlt", "ungeeignet"],
+    "actions": ["none", "add_alias", "add_trait", "extend_taxonomy", "defer", "exclude"],
+    "coverage_contract": "Every keyword in each pinned ImageLexicon source file is covered by the source-file default rule unless an explicit override matches. Large homogeneous files are intentionally represented by one category-wide rule rather than copied row-by-row."
+  },
+  "source_reviews": [
+    {
+      "source_file": "artists.json",
+      "default": {"domain": "image", "taxonomy": ["style_medium", "artist_reference"], "status": "ungeeignet", "action": "exclude"},
+      "note": "All artist-name tags are outside the curated model-neutral core."
+    },
+    {
+      "source_file": "character-attributes.json",
+      "default": {"domain": "person", "taxonomy": ["identity"], "status": "ungeeignet", "action": "exclude"},
+      "overrides": [
+        {"keywords": ["male", "female"], "domain": "person", "taxonomy": ["identity", "sex_gender"], "status": "vorhanden", "action": "none", "existing": "primary UI/state attribute"},
+        {"keywords": ["adult"], "domain": "person", "taxonomy": ["identity", "age"], "status": "vorhanden", "action": "none", "existing": "primary age UI/state attribute"},
+        {"keywords": ["solo", "solo focus"], "domain": "scene", "taxonomy": ["situation", "subject_count"], "status": "ähnlich/alias", "action": "defer"},
+        {"keywords": ["multiple people", "2boys", "2girls", "3boys", "3girls", "multiple boys", "multiple girls"], "domain": "scene", "taxonomy": ["situation", "subject_count"], "status": "fehlt", "action": "defer"},
+        {"keywords": ["child", "teen", "loli", "shota"], "domain": "person", "taxonomy": ["identity", "age"], "status": "ungeeignet", "action": "exclude"}
+      ]
+    },
+    {
+      "source_file": "clothing-appearance.json",
+      "default": {"domain": "scene", "taxonomy": ["clothing"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["t-shirt"], "status": "vorhanden", "action": "none", "existing": "scene.clothing.garments.t_shirt"},
+        {"keywords": ["dress shirt"], "status": "ähnlich/alias", "action": "add_alias", "existing": "scene.clothing.garments.button_shirt"},
+        {"keywords": ["jeans"], "status": "vorhanden", "action": "none", "existing": "scene.clothing.garments.jeans"},
+        {"keywords": ["formal wear"], "taxonomy": ["clothing", "style"], "status": "vorhanden", "action": "add_alias", "existing": "scene.clothing.style.formal"},
+        {"keywords": ["casual wear", "simple outfit"], "taxonomy": ["clothing", "style"], "status": "ähnlich/alias", "action": "add_alias", "existing": "scene.clothing.style.casual"},
+        {"keywords": ["glasses", "sunglasses"], "domain": "person", "taxonomy": ["wearables", "eyewear"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["jewelry", "necklace", "earrings", "bracelet", "ring"], "domain": "person", "taxonomy": ["wearables", "jewelry"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["hat", "cap"], "domain": "person", "taxonomy": ["wearables", "head_accessories"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["naked shirt", "clothed female nude male", "school uniform", "lolita fashion", "fantasy outfit", "armor"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["bikini", "swimsuit", "lingerie", "underwear", "thigh highs"], "status": "fehlt", "action": "defer"}
+      ]
+    },
+    {
+      "source_file": "expressions.json",
+      "default": {"domain": "person", "taxonomy": ["expression"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["smile", "smirk", "serious", "confident", "shy", "surprised", "tired", "neutral expression"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["grin", "laughing", "thinking"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["eyes closed", "eyes half-closed"], "taxonomy": ["head_gaze", "eye_state"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["looking at viewer", "looking away", "looking up", "looking down", "sidelook"], "taxonomy": ["head_gaze", "gaze_direction"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["looking over shoulder", "facing away", "facing viewer", "profile"], "taxonomy": ["head_gaze", "head_orientation"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["open mouth", "furrowed brow", "eyebrows raised", "wink", "frown", "pout", "crying", "tears", "yawning"], "taxonomy": ["expression", "facial_configuration"], "status": "fehlt", "action": "extend_taxonomy"}
+      ]
+    },
+    {
+      "source_file": "image-quality.json",
+      "default": {"domain": "image", "taxonomy": ["realism"], "status": "ungeeignet", "action": "exclude"},
+      "overrides": [
+        {"keywords": ["sharp focus"], "taxonomy": ["focus_depth_of_field", "focus"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["bokeh"], "taxonomy": ["focus_depth_of_field", "optical_effect"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["rule of thirds", "golden ratio", "symmetrical"], "taxonomy": ["composition"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["dramatic angle"], "taxonomy": ["perspective"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["dslr"], "taxonomy": ["camera", "capture"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["film grain"], "taxonomy": ["style_medium", "effects"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["hdr", "professional color grading"], "taxonomy": ["style_medium", "color_rendering"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["professional lighting", "volumetric lighting"], "taxonomy": ["lighting"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["unreal engine", "octane render", "cinema 4d", "pixar render", "ray tracing", "ray traced", "subsurface scattering"], "taxonomy": ["style_medium", "rendering"], "status": "ungeeignet", "action": "exclude"}
+      ]
+    },
+    {
+      "source_file": "physical-features.json",
+      "default": {"domain": "person", "taxonomy": ["body"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["athletic build"], "taxonomy": ["body", "build"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["slim", "plump", "curvy"], "taxonomy": ["body", "build"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["petite", "tall", "short"], "taxonomy": ["body", "proportions", "height"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["small breasts", "medium breasts", "huge breasts", "flat chest"], "taxonomy": ["body", "secondary_sex_characteristics", "breast"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["breast press", "breasts on glass", "large areolae", "puffy nipples"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["navel"], "taxonomy": ["body", "details", "abdomen"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["white hair", "black hair", "brown hair", "blonde hair", "red hair", "gray hair"], "taxonomy": ["hair_color_effects", "base_color"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["pink hair", "blue hair", "green hair", "purple hair", "multicolored hair"], "taxonomy": ["hair_color_effects", "base_color"], "status": "fehlt", "action": "defer"},
+        {"keywords": ["long hair", "short hair", "medium hair"], "taxonomy": ["hair", "length"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["braided hair", "ponytail", "bun", "bob cut", "pixie cut", "messy hair", "bangs", "side swept bangs"], "taxonomy": ["hair", "style"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["twintails", "ahoge"], "taxonomy": ["hair", "style"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["wavy hair", "straight hair", "curly hair"], "taxonomy": ["hair", "texture"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["blue eyes", "brown eyes", "green eyes", "black eyes", "heterochromia"], "taxonomy": ["face", "eyes", "color"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["red eyes", "purple eyes", "yellow eyes", "pink eyes"], "taxonomy": ["face", "eyes", "color"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["pale skin", "tan skin", "dark skin"], "taxonomy": ["skin", "tone"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["freckles"], "taxonomy": ["skin", "pigmentation"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["mole", "scar"], "taxonomy": ["skin", "marks"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["tattoo"], "taxonomy": ["skin", "marks", "tattoo"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["fangs", "pointed ears", "horns", "wings", "tail"], "status": "ungeeignet", "action": "exclude"}
+      ]
+    },
+    {
+      "source_file": "poses.json",
+      "default": {"domain": "person", "taxonomy": ["pose"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["standing", "sitting", "kneeling"], "taxonomy": ["pose", "base_position"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["lying"], "taxonomy": ["pose", "base_position"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["slouching", "leaning", "arms up", "arms crossed", "arms behind back", "hands on hips", "legs crossed", "spread legs"], "taxonomy": ["pose"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["walking"], "domain": "scene", "taxonomy": ["situation", "activity"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["running", "jumping", "swimming", "dancing"], "domain": "scene", "taxonomy": ["situation", "activity"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["floating", "flying"], "domain": "scene", "taxonomy": ["situation", "activity"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["hugging", "handholding", "embracing"], "domain": "scene", "taxonomy": ["interaction", "person_to_person"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["kissing"], "domain": "scene", "taxonomy": ["interaction", "person_to_person"], "status": "fehlt", "action": "defer"},
+        {"keywords": ["full body", "half body", "portrait", "headshot"], "domain": "image", "taxonomy": ["framing", "subject_extent"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["from above", "from below", "from behind", "from side", "three-quarter view"], "domain": "image", "taxonomy": ["perspective"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["action pose", "dynamic pose", "static pose", "symmetrical pose", "asymmetrical pose", "formal pose"], "taxonomy": ["pose", "quality"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["relaxed pose", "casual pose"], "taxonomy": ["pose", "posture"], "status": "vorhanden", "action": "add_alias"}
+      ]
+    },
+    {
+      "source_file": "setting-environment.json",
+      "default": {"domain": "scene", "taxonomy": ["location"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["beach", "forest", "office", "cafe", "park"], "taxonomy": ["location"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["city", "urban"], "taxonomy": ["location", "outdoor"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["bedroom", "kitchen", "living room"], "taxonomy": ["location", "indoor", "home"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["school", "classroom"], "taxonomy": ["location"], "status": "ungeeignet", "action": "exclude"},
+        {"keywords": ["indoor", "outdoor", "rural"], "taxonomy": ["environment"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["sky", "clouds", "tile wall"], "taxonomy": ["environment", "visible_elements"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["rainy", "sunny", "snowy", "foggy", "night", "day", "sunset", "sunrise"], "taxonomy": ["weather_time"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["studio background", "solid background", "gradient background", "white background", "black background"], "taxonomy": ["background"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["against glass"], "taxonomy": ["interaction", "surface"], "status": "fehlt", "action": "defer"}
+      ]
+    },
+    {
+      "source_file": "sexual-content.json",
+      "default": {"domain": "scene", "taxonomy": ["interaction"], "status": "ungeeignet", "action": "exclude"},
+      "note": "All entries are excluded from this source. Neutral pose words duplicated here are reviewed from non-sexual source files instead."
+    },
+    {
+      "source_file": "visual-effects.json",
+      "default": {"domain": "image", "taxonomy": ["style_medium", "effects"], "status": "fehlt", "action": "add_trait"},
+      "overrides": [
+        {"keywords": ["depth of field", "blurry background"], "taxonomy": ["focus_depth_of_field", "depth_of_field"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["bokeh", "sharp focus"], "taxonomy": ["focus_depth_of_field"], "status": "vorhanden", "action": "none"},
+        {"keywords": ["natural lighting", "soft lighting", "hard lighting", "backlight", "front lighting", "side lighting", "studio lighting"], "taxonomy": ["lighting"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["dramatic lighting", "cinematic lighting", "volumetric lighting", "god rays", "sunbeams"], "taxonomy": ["lighting"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["dynamic angle", "perspective"], "taxonomy": ["perspective"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["wide angle", "telephoto", "macro"], "taxonomy": ["camera", "lens"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["fisheye effect"], "taxonomy": ["camera", "lens"], "status": "fehlt", "action": "add_trait"},
+        {"keywords": ["close-up"], "taxonomy": ["framing", "subject_extent"], "status": "vorhanden", "action": "add_alias"},
+        {"keywords": ["motion blur", "lens flare", "film grain", "vignette", "bloom", "chromatic aberration", "noise", "blur", "tilt shift"], "taxonomy": ["style_medium", "effects"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["water", "steam", "dust", "smoke", "fog", "mist", "rain effect", "snow effect", "wind effect", "fire effect"], "domain": "scene", "taxonomy": ["environment", "atmosphere"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["glowing", "sparkles", "particles", "electricity", "magic effect", "aura"], "status": "ungeeignet", "action": "exclude"}
+      ]
+    },
+    {
+      "source_file": "visual-theme.json",
+      "default": {"domain": "image", "taxonomy": ["style_medium", "visual_style"], "status": "ungeeignet", "action": "defer"},
+      "overrides": [
+        {"keywords": ["photorealistic", "hyperrealistic"], "taxonomy": ["realism"], "status": "ähnlich/alias", "action": "add_alias"},
+        {"keywords": ["monochrome", "pastel colors", "vibrant colors", "muted colors", "warm colors", "cool colors", "high contrast", "low contrast", "colorful"], "taxonomy": ["style_medium", "color_rendering"], "status": "fehlt", "action": "extend_taxonomy"},
+        {"keywords": ["minimalist", "maximalist"], "taxonomy": ["composition", "density"], "status": "fehlt", "action": "defer"},
+        {"keywords": ["illustration", "painting", "cartoon", "stylized", "abstract", "surreal"], "taxonomy": ["style_medium", "medium"], "status": "ungeeignet", "action": "defer"},
+        {"keywords": ["fantasy", "sci-fi", "cyberpunk", "steampunk", "dark fantasy", "medieval", "futuristic", "dystopian", "utopian", "vaporwave", "retrowave"], "domain": "scene", "taxonomy": ["situation", "theme"], "status": "ungeeignet", "action": "exclude"}
+      ]
+    }
+  ],
+  "confirmed_gaps": [
+    {"domain": "person", "taxonomy": ["face", "eyes", "color"], "examples": ["blue eyes", "brown eyes", "green eyes", "heterochromia"]},
+    {"domain": "person", "taxonomy": ["body", "proportions", "height"], "examples": ["tall", "short", "petite"]},
+    {"domain": "person", "taxonomy": ["skin", "marks", "tattoo"], "examples": ["tattoo"]},
+    {"domain": "person", "taxonomy": ["expression", "facial_configuration"], "examples": ["open mouth", "furrowed brow", "eyebrows raised", "wink", "frown", "pout", "tears", "yawning"]},
+    {"domain": "scene", "taxonomy": ["location", "indoor", "home"], "examples": ["bedroom", "kitchen", "living room"]},
+    {"domain": "scene", "taxonomy": ["environment", "atmosphere"], "examples": ["steam", "dust", "smoke", "mist", "wind effect"]},
+    {"domain": "scene", "taxonomy": ["interaction", "person_to_person"], "examples": ["hugging", "handholding", "embracing"], "deferred": "requires multi-person decision"},
+    {"domain": "image", "taxonomy": ["style_medium", "color_rendering"], "examples": ["monochrome", "muted colors", "warm colors", "cool colors", "high contrast", "low contrast"]},
+    {"domain": "image", "taxonomy": ["style_medium", "effects"], "examples": ["film grain", "vignette", "chromatic aberration", "motion blur"], "deferred": "consider dedicated image.effects root"}
+  ],
+  "taxonomy_validations": [
+    "Keep expression, gaze/head orientation, pose, interaction, framing and perspective separate.",
+    "Keep location, environment, weather/time and background separate.",
+    "Keep camera/lens, focus/depth of field, lighting, composition and rendering/style separate.",
+    "Keep wearables separate from clothing.",
+    "Keep objects separate from interactions."
+  ],
+  "deferred_questions": [
+    "Explicit multi-person / subject-count modeling",
+    "Breadth of clothing catalog",
+    "Non-photographic media and broad themes",
+    "Dedicated image.effects root versus style_medium.effects",
+    "Person-to-person interactions in core versus extension"
+  ]
+}
