@@ -1,0 +1,15 @@
+{
+  "schema_version": 2,
+  "meta": {
+    "domain": "person",
+    "taxonomy": ["skin"],
+    "title_en": "Skin",
+    "title_de": "Haut",
+    "description_en": "Additional skin-mark traits identified during the ImageLexicon coverage review.",
+    "description_de": "Zusätzliche Hautmerkmale aus dem ImageLexicon-Coverage-Review."
+  },
+  "traits": [
+    {"id":"person.skin.marks.tattoo.small","prompt":"small visible tattoo","label_en":"Small tattoo","label_de":"Kleine Tätowierung","description_en":"A small visible tattoo used as an individualizing skin mark.","description_de":"Eine kleine sichtbare Tätowierung als individualisierendes Hautmerkmal.","domain":"person","taxonomy":["skin","marks","tattoo"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["skin","marks","tattoo","body-art"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"person.skin.marks.tattoo.visible","prompt":"visible tattoos","label_en":"Visible tattoos","label_de":"Sichtbare Tätowierungen","description_en":"One or more clearly visible tattoos without defining a specific motif.","description_de":"Eine oder mehrere klar sichtbare Tätowierungen ohne Festlegung eines bestimmten Motivs.","domain":"person","taxonomy":["skin","marks","tattoo"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"multiple","group":null},"tags":["skin","marks","tattoo","tattoos","body-art"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
