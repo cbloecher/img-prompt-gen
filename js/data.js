@@ -42,6 +42,21 @@ export const TRAIT_FILES = [
   'image/realism.json'
 ];
 
+function mergeSearchAliases(docs, aliasConfig) {
+  const traitIndex = new Map();
+  for (const doc of docs) for (const trait of doc.traits || []) traitIndex.set(trait.id, trait);
+
+  for (const entry of aliasConfig.entries || []) {
+    const trait = traitIndex.get(entry.trait_id);
+    if (!trait) throw new Error(`Alias verweist auf unbekanntes Trait: ${entry.trait_id}`);
+    const aliases = [...new Set([...(trait.aliases || []), ...(entry.aliases || [])])];
+    trait.aliases = aliases;
+    // The current search already indexes tags. Mirror aliases there until aliases
+    // are consumed directly by every search/import component.
+    trait.tags = [...new Set([...(trait.tags || []), ...aliases])];
+  }
+}
+
 export async function loadData() {
   const docs = await Promise.all(TRAIT_FILES.map(async path => {
     const response = await fetch(`data/${path}`);
@@ -50,6 +65,11 @@ export async function loadData() {
     if (doc.schema_version !== 2) throw new Error(`data/${path} verwendet nicht Schema v2`);
     return doc;
   }));
+
+  const aliasesResponse = await fetch('data/search-aliases.json');
+  if (!aliasesResponse.ok) throw new Error('Kann data/search-aliases.json nicht laden');
+  const aliases = await aliasesResponse.json();
+  mergeSearchAliases(docs, aliases);
 
   const safetyResponse = await fetch('data/safety.json');
   if (!safetyResponse.ok) throw new Error('Kann data/safety.json nicht laden');
@@ -61,5 +81,5 @@ export async function loadData() {
     if (response.ok) negative = await response.json();
   } catch (_) { /* negative prompts are optional */ }
 
-  return { docs, safety, negative };
+  return { docs, safety, negative, aliases };
 }
