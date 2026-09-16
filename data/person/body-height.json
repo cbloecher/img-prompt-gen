@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "meta": {
+    "domain": "person",
+    "taxonomy": ["body"],
+    "title_en": "Body",
+    "title_de": "Körper",
+    "description_en": "Additional body proportion traits identified during the ImageLexicon coverage review.",
+    "description_de": "Zusätzliche Körperproportionen aus dem ImageLexicon-Coverage-Review."
+  },
+  "traits": [
+    {"id":"person.body.proportions.height.short","prompt":"short adult stature","label_en":"Short stature","label_de":"Kleine Körpergröße","description_en":"Adult person with a relatively short overall stature.","description_de":"Erwachsene Person mit relativ kleiner Gesamtkörpergröße.","domain":"person","taxonomy":["body","proportions","height"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"single","group":"person.body.proportions.height"},"tags":["body","proportions","height","short","petite"],"requires":[],"conflicts":[],"implies":[],"notes":"'Petite' is treated here only as a search alias for short stature, not as a complete body-type definition."},
+    {"id":"person.body.proportions.height.average","prompt":"average adult height","label_en":"Average height","label_de":"Durchschnittliche Körpergröße","description_en":"Adult person with an approximately average overall stature.","description_de":"Erwachsene Person mit ungefähr durchschnittlicher Gesamtkörpergröße.","domain":"person","taxonomy":["body","proportions","height"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"single","group":"person.body.proportions.height"},"tags":["body","proportions","height","average"],"requires":[],"conflicts":[],"implies":[],"notes":""},
+    {"id":"person.body.proportions.height.tall","prompt":"tall adult stature","label_en":"Tall stature","label_de":"Große Körpergröße","description_en":"Adult person with a relatively tall overall stature.","description_de":"Erwachsene Person mit relativ großer Gesamtkörpergröße.","domain":"person","taxonomy":["body","proportions","height"],"applies_to":["all"],"age_range":{"min":18,"max":null},"selection":{"mode":"single","group":"person.body.proportions.height"},"tags":["body","proportions","height","tall"],"requires":[],"conflicts":[],"implies":[],"notes":""}
+  ]
+}
