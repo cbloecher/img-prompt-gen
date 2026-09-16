@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "description": "Search-only aliases merged into canonical v2 traits at load time. They never change prompt output.",
+  "entries": [
+    {"trait_id":"person.body.build.slender","aliases":["slim","lean build","slim physique","schlank","schmale Statur"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.build.full","aliases":["plump","full figured","full-figured","füllig","weiche Statur"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.build.voluptuous","aliases":["curvy","curvaceous","kurvig","weibliche Kurven"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.build.athletic","aliases":["athletic physique","fit build","sportlich","trainierte Statur"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.secondary_sex_characteristics.breast.small","aliases":["small breasts","small bust","kleine Brust"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.secondary_sex_characteristics.breast.medium","aliases":["medium breasts","medium bust","mittelgroße Brust"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.secondary_sex_characteristics.breast.large","aliases":["large breasts","large bust","große Brust"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.body.secondary_sex_characteristics.breast.very_full","aliases":["huge breasts","very full bust","busty","vollbusig"],"sources":["imagelexicon","curated"]},
+
+    {"trait_id":"person.expression.quality.thoughtful","aliases":["thinking","reflective","nachdenklich","in Gedanken"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.quality.pensive","aliases":["thinking","contemplative","introspective","sinnierend","grüblerisch"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.facial_configuration.laughing","aliases":["grin","laugh","laughing","lachen","lachend"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.facial_configuration.raised_eyebrows","aliases":["eyebrows raised","raised brows","hochgezogene Augenbrauen"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.facial_configuration.teary_eyes","aliases":["tears","crying","watery eyes","Tränen","weinend"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.facial_configuration.open_mouth","aliases":["open mouth","mouth open","geöffneter Mund"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.expression.facial_configuration.wink","aliases":["winking","one eye closed","zwinkern"],"sources":["imagelexicon","curated"]},
+
+    {"trait_id":"person.head_gaze.gaze_direction.camera","aliases":["looking at viewer","looking at camera","eye contact with viewer","Blick zum Betrachter","Blick in Kamera"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.head_gaze.gaze_direction.side","aliases":["sidelook","side glance","looking sideways","Seitenblick"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.head_gaze.gaze_direction.away","aliases":["looking away","averted gaze","wegschauen","abgewandter Blick"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.head_gaze.head_orientation.turned_away","aliases":["facing away","looking over shoulder","head turned away","Kopf abgewandt"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"person.head_gaze.head_orientation.toward_camera","aliases":["facing viewer","facing camera","head toward viewer","Kopf zur Kamera"],"sources":["imagelexicon","curated"]},
+
+    {"trait_id":"scene.clothing.garments.button_shirt","aliases":["dress shirt","button shirt","button-down shirt","Hemd","Bluse"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"scene.clothing.style.formal","aliases":["formal wear","formal attire","elegant clothing","formelle Kleidung"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"scene.clothing.style.casual","aliases":["casual wear","simple outfit","everyday wear","Freizeitkleidung","Alltagskleidung"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"scene.clothing.style.business","aliases":["business wear","office attire","professional attire","Bürokleidung","Geschäftskleidung"],"sources":["curated"]},
+    {"trait_id":"scene.clothing.style.workwear","aliases":["work clothes","work clothing","utility clothing","Arbeitskleidung","Berufskleidung"],"sources":["curated"]},
+
+    {"trait_id":"image.focus_depth_of_field.depth.shallow","aliases":["blurry background","blurred background","background blur","selective focus","unscharfer Hintergrund","Hintergrundunschärfe"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"image.focus_depth_of_field.optical_effect.bokeh","aliases":["bokeh background","creamy bokeh","background bokeh","Bokeh-Hintergrund"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"image.focus_depth_of_field.focus.sharp","aliases":["sharp focus","in focus","crisp focus","scharf fokussiert"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"image.effects.texture.film_grain","aliases":["film grain","analog grain","photographic grain","Filmkorn","Körnung"],"sources":["imagelexicon","curated"]},
+    {"trait_id":"image.effects.motion.motion_blur","aliases":["motion blur","movement blur","Bewegungsunschärfe","Bewegungsblur"],"sources":["imagelexicon","curated"]}
+  ]
+}
