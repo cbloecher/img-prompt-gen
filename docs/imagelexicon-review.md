@@ -2,7 +2,7 @@
 
 ## Scope and source
 
-This review compares the current `img-prompt-gen` v2 taxonomy against **ImageLexicon** as a coverage source, not as a target taxonomy.
+This review compares the `img-prompt-gen` v2 taxonomy against **ImageLexicon** as a coverage source, not as a target taxonomy.
 
 Pinned source:
 
@@ -21,89 +21,66 @@ The target model remains:
 domain -> taxonomy[] -> trait
 ```
 
-Each ImageLexicon source file has a deterministic **default review rule** plus explicit **keyword overrides**. This is intentionally rule-based rather than copying a large flat source vocabulary into our repository. Every keyword in the pinned source files is covered by either the source-file default or an explicit override.
+Each ImageLexicon source file has a deterministic default review rule plus explicit keyword overrides. ImageLexicon categories are never imported 1:1; our taxonomy remains authoritative.
 
-Statuses:
+Statuses used in the review:
 
 - `vorhanden` — semantics already exist.
-- `ähnlich/alias` — same or sufficiently close semantics; prefer alias/tag rather than a new trait.
-- `fehlt` — useful concept is not currently represented.
+- `ähnlich/alias` — same or sufficiently close semantics; prefer tags/search aliases rather than a second semantic trait.
+- `fehlt` — useful concept is not represented.
 - `ungeeignet` — outside the curated natural-realistic adult core or not a useful stable semantic trait.
-
-High-volume homogeneous sources are deliberately compressed. In particular, all entries of `artists.json` are covered by one category-wide exclusion rule rather than copied one row per artist.
 
 ## Main result
 
-The review confirms that the new v2 structure is substantially more coherent than ImageLexicon's source categories. ImageLexicon repeatedly mixes concepts that we now keep separate:
+The review confirms that the v2 structure is more coherent than the source categories. ImageLexicon repeatedly mixes concepts that we keep separate:
 
-- `expressions.json` mixes facial expression, gaze, eye state and head orientation.
-- `poses.json` mixes body pose, actions, person-to-person interaction, framing and camera perspective.
-- `setting-environment.json` mixes location, environment, weather/time and background.
-- `image-quality.json` and `visual-effects.json` mix camera/lens, focus, composition, lighting, visual effects, render engines and generic quality-booster tokens.
-- `clothing-appearance.json` mixes clothing with eyewear and jewelry.
+- facial expression, gaze, eye state and head orientation;
+- pose, action, person-to-person interaction, framing and perspective;
+- location, environment, weather/time and background;
+- camera/lens, focus, composition, lighting, effects and generic quality tokens;
+- clothing, eyewear and jewelry.
 
-Therefore **no structural import of ImageLexicon categories is recommended**. Our taxonomy remains authoritative.
+These existing separations remain unchanged.
 
-## Confirmed taxonomy gaps
+## Implemented recommendations
+
+The reviewed gaps have now been imported as additive v2 taxonomy content without restructuring existing branches.
 
 ### Person
 
-**Eye color** is the clearest missing anatomical dimension:
+Implemented:
 
 ```text
 person
   face
     eyes
       color
-```
 
-Useful candidates include natural blue, brown, green and very dark eyes plus heterochromia. Stylized red/purple/yellow/pink eyes remain outside the natural-realistic core.
-
-**Height / stature** is missing as an explicit proportion dimension:
-
-```text
-person
   body
     proportions
       height
-```
 
-Candidates: tall, short; `petite` should be reviewed carefully because it mixes height and overall build.
-
-**Tattoo** belongs with persistent body/skin marks rather than wearables:
-
-```text
-person
   skin
     marks
       tattoo
-```
 
-**Visible facial configuration** is underrepresented. The existing `expression` tree contains interpreted expressions and smiles, but ImageLexicon exposes useful visible configurations such as open mouth, furrowed brow, raised eyebrows, wink, frown, pout, tears/crying and yawning. A useful refinement would be:
-
-```text
-person
   expression
     facial_configuration
 ```
 
-This keeps visible facial geometry separate from interpreted qualities such as confident, shy or thoughtful.
+Eye color contains natural-realistic colors and heterochromia. Stylized red, purple, pink and yellow eyes remain excluded from the curated core.
+
+Height is modeled independently from overall build. `petite` is treated only as a search-related term around short stature rather than as a complete body definition.
+
+Tattoo is modeled as a persistent skin mark, not as a wearable.
+
+`facial_configuration` contains directly visible configurations such as open mouth, frown, pout, furrowed brow, raised eyebrows, wink, teary eyes, laughing and yawning. These remain separate from interpreted qualities such as confident, shy or thoughtful.
 
 ### Scene
 
-Common domestic rooms are currently too coarse under `Home`:
+Location coverage was expanded with common rooms and additional natural/indoor locations, including bedroom, kitchen, living room, bathroom, restaurant, bar, classroom, garden, mountains, desert, jungle and underwater scenes.
 
-```text
-scene
-  location
-    indoor
-      home
-        bedroom
-        kitchen
-        living_room
-```
-
-A separate **scene atmosphere** branch is also justified by terms such as steam, dust, smoke, mist and wind:
+A dedicated atmosphere branch was added:
 
 ```text
 scene
@@ -111,9 +88,9 @@ scene
     atmosphere
 ```
 
-This should remain separate from image-level lighting and optical effects.
+It currently includes steam, smoke, airborne dust, local mist/haze and condensation. This remains distinct from global weather and from image-level optical effects.
 
-ImageLexicon also reveals a future multi-person gap:
+Person-to-person interactions were added under the existing Interaction root:
 
 ```text
 scene
@@ -121,97 +98,119 @@ scene
     person_to_person
 ```
 
-Candidates include hugging, handholding and embracing. This should only be added together with an explicit decision on multi-person support.
+Current examples include hugging/embracing, hand holding, kissing, conversation, eye contact, handshake, high five, arm around shoulders, walking together and dancing together.
+
+No dedicated multi-person UI or subject-count model has been introduced yet. The data is available through the generic taxonomy renderer.
+
+### Clothing
+
+The clothing catalog was deliberately broadened while keeping jewelry, eyewear and carried accessories separate under `person -> wearables`.
+
+Coverage now ranges from:
+
+```text
+underwear
+sleepwear
+casual / smart casual
+business / formal
+sportswear
+summer / winter clothing
+outerwear
+swimwear
+hosiery
+footwear
+workwear
+coveralls / overalls
+lab clothing
+high-visibility clothing
+protective suits
+chemical protective suits
+cleanroom suits
+```
+
+Examples include bra, briefs, boxer briefs, boxer shorts, undershirt, lingerie, pajamas, nightgown, bathrobe, tank top, polo shirt, hoodie, sweater, trousers, chinos, cargo pants, shorts, skirts, leggings, joggers, dress, jumpsuit, bib overalls, blazer, coat, raincoat, parka, business suit, uniform, work coveralls, lab coat, protective suits, swimwear and a broad footwear set.
+
+All underwear/swimwear entries remain neutral adult garment traits and do not imply sexual framing.
 
 ### Image
 
-A significant missing branch is **color rendering / grading**:
+Color rendering was added under Style & medium:
 
 ```text
 image
   style_medium
     color_rendering
+      palette
+      temperature
+      contrast
 ```
 
-Candidates include monochrome, muted colors, warm/cool palette, vibrant colors and high/low contrast. This is conceptually different from both `mood` and `lighting`.
+This includes muted, vibrant and pastel palettes, warm/cool rendering and high/low contrast.
 
-Another useful branch is photographic/image effects:
+The architectural question around photographic effects was resolved in favor of a dedicated root:
 
 ```text
 image
-  style_medium
-    effects
+  effects
 ```
 
-Candidates include film grain, vignette, chromatic aberration and motion blur. Before implementing this, we should decide whether it deserves its own root `image -> effects` instead of living below `style_medium`.
+Initial natural-photographic effects include film grain, digital noise, vignette, chromatic aberration, lens flare, bloom, halation and motion blur.
 
-## Good existing coverage
+Effects remain separate from lighting, camera/lens description, focus/depth of field and style/medium.
 
-The review confirms strong coverage in several areas:
+## Good existing coverage retained
 
-- Basic age/adult handling and sex/gender are already primary person attributes.
-- Body build, breast morphology, hair length/texture/style and natural hair colors cover much of ImageLexicon's natural-person vocabulary.
-- Skin tone, freckles, moles and scars are already better structured than the source vocabulary.
-- Basic expression, gaze direction, eye state, head orientation and pose are present and correctly separated.
-- Basic location, weather/time and background cover much of `setting-environment.json`.
-- Basic framing, perspective, focus/depth of field, camera/lens and lighting now cover the most useful photographic terms.
-- Eyewear and jewelry are correctly modeled as `person -> wearables` rather than clothing.
+The following areas were already strong and were not restructured:
 
-## Alias candidates
+- adult age handling and sex/gender;
+- body build and proportions;
+- hair length, texture, style and natural color/effects;
+- skin tone, freckles, moles and scars;
+- expression vs. head/gaze vs. pose;
+- wearables vs. clothing;
+- location vs. environment vs. weather/time vs. background;
+- objects vs. interaction;
+- framing vs. perspective;
+- camera/lens vs. focus/depth of field vs. lighting;
+- shot style vs. mood vs. realism.
 
-A large portion of ImageLexicon should enrich search vocabulary rather than add traits. Examples:
+## Alias handling
+
+ImageLexicon synonyms are not multiplied into separate semantic traits. Search vocabulary should continue to use `tags` where appropriate. Typical alias relationships include:
 
 ```text
-slim                  -> slender
-plump / curvy         -> full / voluptuous
-dress shirt           -> button-up shirt
-formal wear           -> formal clothing
-casual wear           -> casual clothing
-grin                  -> smile family
-thinking              -> thoughtful / pensive
-looking at viewer     -> gaze at camera
-blurry background     -> shallow depth of field
-city / urban          -> city street / urban environment
+slim                   -> slender
+plump / curvy          -> full / voluptuous
+dress shirt            -> button-up shirt
+formal wear            -> formal clothing
+casual wear            -> casual clothing
+grin                    -> smile/laughing family
+thinking                -> thoughtful / pensive
+looking at viewer      -> gaze at camera
+blurry background      -> shallow depth of field
+city / urban           -> city street / urban environment
 pale / tan / dark skin -> existing skin-tone family
 ```
 
-Aliases should be added through tags/search aliases without multiplying semantic traits.
+Newly imported traits include relevant source terms in their tags where useful. Further alias enrichment can be done incrementally without changing taxonomy structure.
 
 ## Excluded families
 
-The following source families should not enter the curated core:
+The following source families remain excluded from the curated core:
 
-- All artist-name tags from `artists.json`.
-- All entries from `sexual-content.json`; neutral pose words duplicated there are reviewed from non-sexual source categories instead.
-- `loli`, `shota`, `child`, `teen` and other minor-coded tags.
-- Fantasy/non-human anatomy such as horns, wings, tail, fangs and pointed ears.
-- Magic/aura-style fantasy effects.
-- Generic prompt-quality boosters such as `masterpiece`, `best quality`, `8k`, `award winning photo`.
-- Render-engine terms such as Unreal Engine, Octane Render, Cinema 4D and Pixar render for the current natural-photographic core.
+- artist-name tags;
+- explicit sexual-content vocabulary;
+- minor-coded terms such as `loli`, `shota`, `child` and `teen`;
+- fantasy/non-human anatomy such as horns, wings, tails, fangs and pointed ears;
+- magic/aura-style effects;
+- generic quality boosters such as `masterpiece`, `best quality`, `8k` and `award winning photo`;
+- render-engine names such as Unreal Engine, Octane Render, Cinema 4D and Pixar render for the current natural-photographic core.
 
-## Deferred architecture questions
+## Still deliberately deferred
 
-The review surfaces a few questions that should be decided deliberately rather than solved by bulk-importing traits:
+Only two larger architecture questions remain intentionally open:
 
-1. Do we want explicit **multi-person / subject-count** modeling?
-2. How broad should **clothing** become beyond everyday and work-oriented core garments?
-3. Should non-photographic media and broad themes eventually live in this same generator?
-4. Should photographic effects remain under `style_medium`, or should we introduce `image -> effects`?
-5. Should affectionate person-to-person interactions be core features or an optional extension?
+1. Explicit multi-person / subject-count modeling and any dedicated UI for it.
+2. Whether non-photographic media and broad visual themes should eventually become part of the same generator.
 
-## Recommendation
-
-Do **not** bulk-import ImageLexicon.
-
-The next changes worth discussing are, in this order:
-
-1. `person.face.eyes.color`
-2. `person.body.proportions.height`
-3. `person.expression.facial_configuration`
-4. domestic room locations
-5. `scene.environment.atmosphere`
-6. `image.style_medium.color_rendering`
-7. image effects placement
-8. multi-person support and person-to-person interactions
-
-Only after those decisions should follow-up issues be created. The review matrix deliberately separates these structural decisions from ordinary alias additions.
+These are not required for the imported person-to-person interaction data or for the current natural-photographic core.
